@@ -1,0 +1,28 @@
+.bg-pink {
+  background-color: hotpink !important;
+}
+.drag-active {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+.drag-over {
+  background-color: #eee;
+}
+.two-min-width {
+  width: 20%;
+  border: 1px solid;
+  font-size: smaller;
+}
+.four-min-width {
+  width: 40%;
+  border: 1px solid;
+}
+.backdrop{
+  background-color:rgba(0,0,0,0.6);
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100vh;
+}

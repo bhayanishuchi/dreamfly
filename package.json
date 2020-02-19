@@ -20,8 +20,13 @@
     "@angular/platform-browser": "^6.0.2",
     "@angular/platform-browser-dynamic": "^6.0.2",
     "@angular/router": "^6.0.2",
+    "angular-calendar": "^0.28.2",
     "core-js": "^2.5.4",
-    "rxjs": "^6.0.0",
+    "date-fns": "^2.9.0",
+    "devextreme": "^19.2.6",
+    "devextreme-angular": "^19.2.6",
+    "jszip": "^3.2.2",
+    "rxjs": "6.0.0",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

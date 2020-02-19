@@ -1,0 +1,66 @@
+{
+  "data": [
+    {
+      "text": "event 1",
+      "playerType": "newbie",
+      "startTime": "2020-2-19 10:00",
+      "totalTime": "2",
+      "allDay": true
+    },
+    {
+      "text": "event 2",
+      "playerType": "newbie",
+      "startTime": "2020-2-19 10:00",
+      "totalTime": "2",
+      "allDay": true
+    },
+    {
+      "text": "event 4",
+      "playerType": "newbie",
+      "startTime": "2020-2-19 11:00",
+      "totalTime": "4",
+      "allDay": true
+    },
+    {
+      "text": "event 3",
+      "playerType": "newbie",
+      "startTime": "2020-2-19 10:00",
+      "totalTime": "4",
+      "allDay": true
+    },
+    {
+      "text": "event 5",
+      "playerType": "newbie",
+      "startTime": "2020-2-19 12:00",
+      "totalTime": "4",
+      "allDay": true
+    },
+    {
+      "text": "event 6",
+      "playerType": "newbie",
+      "startTime": "2020-2-19 11:00",
+      "totalTime": "2",
+      "allDay": true
+    }
+  ],
+  "blockDate": [
+    {
+      "date": "2020-2-20",
+      "allDay": true
+    },
+    {
+      "date": "2020-2-21 12:00",
+      "endDate": "2020-2-21 15:00",
+      "allDay": false
+    },
+    {
+      "date": "2020-2-23",
+      "allDay": true
+    },
+    {
+      "date": "2020-2-25 12:00",
+      "endDate": "2020-2-25 15:00",
+      "allDay": false
+    }
+  ]
+}
