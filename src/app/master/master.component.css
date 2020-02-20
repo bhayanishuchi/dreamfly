@@ -26,3 +26,43 @@
   width:100%;
   height:100vh;
 }
+ /*tab css*/
+.nav-tabs {
+  width: 100%;
+}
+.nav-item {
+  width: 50%;
+}
+ul li.nav-item a.nav-link,
+ul li.nav-item a.nav-link.active
+{
+  border: none;
+  /*padding: 18px 25px;*/
+  color: black;
+  border-radius:0;
+}
+.tab-content{
+  background: #fdfdfd;
+  line-height: 25px;
+  border: 1px solid #ddd;
+  border-top:3px solid dodgerblue;
+  border-bottom:5px solid dodgerblue;
+  padding:30px 25px;
+}
+
+ul li.nav-item a.nav-link:hover,ul li.nav-item a.nav-link.active,
+ul li.nav-item a.nav-link:focus
+{
+  border: none;
+  border:2px solid dodgerblue;
+  color: black;
+  border-radius:0;
+  transition:background 0.20s linear;
+}
+.nav.nav-tabs{
+
+  border: none;
+  color:black;
+  border-radius:0;
+
+}

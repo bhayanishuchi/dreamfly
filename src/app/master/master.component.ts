@@ -5,10 +5,8 @@ import {
   CalendarDayViewBeforeRenderEvent, CalendarEventTitleFormatter,
 } from 'angular-calendar';
 import {Subject} from 'rxjs';
-import {addDays} from 'date-fns';
 import {CustomDateFormatter} from '../lib/custom-date-formatter.provider';
 import {CustomEventTitleFormatter} from '../lib/tooltip';
-import update from '@angular/cli/commands/update';
 import {CalendarService} from '../service/calendar.service';
 
 @Component({
@@ -65,6 +63,7 @@ export class MasterComponent implements OnInit {
   display = 'none';
   startValue: Date = new Date();
   eventData: any = {};
+  userData: any = {};
 
 
   constructor(private calendarService: CalendarService) {
@@ -523,6 +522,7 @@ export class MasterComponent implements OnInit {
 
   OnDayClickedEvent(date) {
     console.log(date);
+    this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
     this.display = 'block';
   }
 
