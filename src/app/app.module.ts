@@ -14,6 +14,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { DragAndDropModule } from 'angular-draggable-droppable';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {DxDateBoxModule, DxSwitchModule} from "devextreme-angular";
+import {HttpClientModule} from '@angular/common/http';
+import {CalendarService} from './service/calendar.service';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,7 @@ import {DxDateBoxModule, DxSwitchModule} from "devextreme-angular";
     BrowserAnimationsModule,
     AppRoutingModule,
     CommonModule,
+    HttpClientModule,
     FormsModule,
     DragAndDropModule,
     DxDateBoxModule,
@@ -35,7 +38,7 @@ import {DxDateBoxModule, DxSwitchModule} from "devextreme-angular";
       useFactory: adapterFactory
     }),
   ],
-  providers: [],
+  providers: [CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,1686 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "GUAM Medical license form",
+    "description": "Medical License",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "52.35.218.163:9000",
+  "tags": [
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/register"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "title": "StatusItem",
+                  "example": "200"
+                },
+                "data": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "title": "StatusItem",
+                      "properties": {
+                        "username": {
+                          "type": "string",
+                          "example": "shah.developer9@gmail.com"
+                        },
+                        "pool": {
+                          "type": "object",
+                          "properties": {
+                            "userPoolId": {
+                              "type": "string",
+                              "example": "us-east-1_3zFrmeF6y"
+                            },
+                            "clientId": {
+                              "type": "string",
+                              "example": "77s5hu3poe0ti9ljpvhialiqqd"
+                            },
+                            "client": {
+                              "type": "object",
+                              "title": "StatusItem",
+                              "properties": {
+                                "endpoint": {
+                                  "type": "string",
+                                  "example": "https://cognito-idp.us-east-1.amazonaws.com/"
+                                },
+                                "userAgent": {
+                                  "type": "string",
+                                  "example": "aws-amplify/0.1.x js"
+                                }
+                              }
+                              }
+                            },
+                            "advancedSecurityDataCollectionFlag": {
+                              "type": "string",
+                              "example": "true"
+                            }
+                          },
+                        "Session": {
+                          "type": "string",
+                          "example": "fc05d545-6def-459d-8bbc-cf630ea98fb6"
+                          },
+                        "client": {
+                          "type": "object",
+                          "properties": {
+                            "endpoint": {
+                              "type": "string",
+                              "example": "https://cognito-idp.us-east-1.amazonaws.com/"
+                            },
+                            "userAgent": {
+                              "type": "string",
+                              "example": "aws-amplify/0.1.x js"
+                            }
+                          }
+                        },
+                        "signInUserSession": {
+                              "type": "string",
+                              "example": "null"
+                          },
+                        "authenticationFlowType": {
+                              "type": "string",
+                              "example": "USER_SRP_AUTH"
+                        },
+                        "keyPrefix": {
+                              "type": "string",
+                              "example": "CognitoIdentityServiceProvider.77s5hu3poe0ti9ljpvhialiqqd"
+                        },
+                        "userDataKey": {
+                              "type": "string",
+                              "example": "CognitoIdentityServiceProvider.77s5hu3poe0ti9ljpvhialiqqd.shah.developer9@gmail.com.userData"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "userConfirmed": {
+                  "type": "string",
+                  "example": "false"
+                },
+                "userSub": {
+                  "type": "string",
+                  "example": "cb157073-c54f-455f-87a9-7b53da0798d7"
+                }
+              }
+            }
+          }
+        }
+      },
+    "/auth/login": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/login"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "status": {
+                  "type": "number",
+                  "title": "StatusItem",
+                  "example": "200"
+                },
+                "data": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "properties": {
+                    "idToken": {
+                      "type": "object",
+                      "title": "StatusItem",
+                      "properties": {
+                        "jwtToken": {
+                          "type": "string",
+                          "example": "eyJraWQiOiJ3WHpXNGxjMmdkRmY2TmYzd2d0XC8welhIRWx3K1dCUmxxVzZaQXV......"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {
+                            "sub": {
+                              "type": "string",
+                              "example": "fc05d545-6def-459d-8bbc-cf630ea98fb6"
+                            },
+                            "gender": {
+                              "type": "string",
+                              "example": "male"
+                            },
+                            "email": {
+                              "type": "string",
+                              "example": "developerteam12345@gmail.com"
+                            },
+                            "email_verified": {
+                              "type": "string",
+                              "example": "true"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "userid": {
+                  "type": "number",
+                  "example": "5"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "user"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/updateProfile": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/updateProfile"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/notification_server_response"
+          },
+          "400": {
+            "$ref": "#/responses/default_server_error"
+          },
+          "401": {
+            "$ref": "#/responses/server_authorization_error"
+          }
+        }
+      }
+    },
+    "/auth/forgotPassword": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/forgetPassword"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/notification_server_response"
+          },
+          "400": {
+            "$ref": "#/responses/default_server_error"
+          },
+          "401": {
+            "$ref": "#/responses/server_authorization_error"
+          }
+        }
+      }
+    },
+    "/auth/confirmPassword": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/confirmPassword"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/notification_server_response"
+          },
+          "400": {
+            "$ref": "#/responses/default_server_error"
+          },
+          "401": {
+            "$ref": "#/responses/server_authorization_error"
+          }
+        }
+      }
+    },
+    "/license-form/autosave": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/autosave"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 Response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "applicationid": {
+                  "type": "number",
+                  "example": "11"
+                },
+                "applicant": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "properties": {
+                    "firstname": {
+                      "type": "string",
+                      "example": "Yaroslav"
+                    },
+                    "userid": {
+                      "type": "number",
+                      "example": "5"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "fgdf@hgf.mj"
+                    }
+                  }
+                },
+                "areaofpractice": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "speciality": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idSpeciality": 625,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "speciality": "my full name",
+                      "dateissued": "2222-02-22T00:00:00.000Z",
+                      "dateexpired": "3333-03-31T00:00:00.000Z"
+                    }
+                  ]
+                },
+                "workhistory": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idWorkHistory": 658,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "fromDate": "1111-11-11T00:00:00.000Z",
+                      "toDate": "2222-02-22T00:00:00.000Z",
+                      "location": "kjh",
+                      "typeOfPractice": "jhk",
+                      "reasonforDiscontinue": "jhk"
+                    }
+                  ]
+                },
+                "education": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idEducation": "685",
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "2222-02-22T00:00:00.000Z",
+                      "degree": "casd",
+                      "type": "medicalSchool",
+                      "photo": ""
+                    },
+                    {
+                      "idEducation": "686",
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "2222-02-22T00:00:00.000Z",
+                      "degree": "casd",
+                      "type": "medicalSchool",
+                      "photo": ""
+                    },
+                    {
+                      "idEducation": 687,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "3333-03-31T00:00:00.000Z",
+                      "degree": "state name",
+                      "type": "postGraduate",
+                      "photo": ""
+                    }
+                  ]
+                },
+                "employmenthistory": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "questionary": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "continuingeducation": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getallapplication": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "applicantdata": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "idApplication": 11,
+                      "firstname": "Yaroslav",
+                      "lastname": "Sidorova",
+                      "formName": "Temporary",
+                      "applicationForm_type": 5,
+                      "status": "Drafted",
+                      "createdate": "2019-02-01T07:47:37.000Z"
+                    },
+                    {
+                      "userid": 5,
+                      "Applicant_seq": 11,
+                      "idApplication": 12,
+                      "firstname": null,
+                      "lastname": null,
+                      "formName": "Full_Medical",
+                      "applicationForm_type": 1,
+                      "status": "Drafted",
+                      "createdate": "2019-02-01T09:10:48.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getapplicationbyid": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "seq",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "applicationid": {
+                  "type": "number",
+                  "example": "11"
+                },
+                "applicant": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "properties": {
+                    "firstname": {
+                      "type": "string",
+                      "example": "Yaroslav"
+                    },
+                    "userid": {
+                      "type": "number",
+                      "example": "5"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "fgdf@hgf.mj"
+                    }
+                  }
+                },
+                "areaofpractice": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "speciality": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idSpeciality": 625,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "speciality": "my full name",
+                      "dateissued": "2222-02-22T00:00:00.000Z",
+                      "dateexpired": "3333-03-31T00:00:00.000Z"
+                    }
+                  ]
+                },
+                "workhistory": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idWorkHistory": 658,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "fromDate": "1111-11-11T00:00:00.000Z",
+                      "toDate": "2222-02-22T00:00:00.000Z",
+                      "location": "kjh",
+                      "typeOfPractice": "jhk",
+                      "reasonforDiscontinue": "jhk"
+                    }
+                  ]
+                },
+                "education": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idEducation": "685",
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "2222-02-22T00:00:00.000Z",
+                      "degree": "casd",
+                      "type": "medicalSchool",
+                      "photo": ""
+                    },
+                    {
+                      "idEducation": "686",
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "2222-02-22T00:00:00.000Z",
+                      "degree": "casd",
+                      "type": "medicalSchool",
+                      "photo": ""
+                    },
+                    {
+                      "idEducation": 687,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "3333-03-31T00:00:00.000Z",
+                      "degree": "state name",
+                      "type": "postGraduate",
+                      "photo": ""
+                    }
+                  ]
+                },
+                "employmenthistory": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "questionary": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "continuingeducation": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "overview": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Drafted"
+                    },
+                    "reviwer": {
+                      "type": "string",
+                      "example": "true"
+                    },
+                    "forms": {
+                      "type": "array",
+                      "title": "StatusItem",
+                      "example": [
+                        {
+                          "Application_sub_form": "GBME-1",
+                          "description": "abcd",
+                          "acceptableresult": "YES"
+                        },
+                        {
+                          "Application_sub_form": "GBME-1",
+                          "description": " ",
+                          "acceptableresult": "NO"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/changestatus": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "formType",
+            "in": "body",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "Status": {
+                  "type": "string",
+                  "example": "Status change Successfully"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getsubmitedapplication": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "applicantdata": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "userid": 1,
+                      "Applicant_seq": 3,
+                      "idApplication": 3,
+                      "firstname": "minal",
+                      "lastname": "pariyawala",
+                      "formName": "Limited",
+                      "applicationForm_type": 2,
+                      "status": "Submitted",
+                      "createdate": "2019-02-01T11:14:34.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getquestions": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "formType",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "totalQuestion": {
+                  "type": "number",
+                  "title": "StatusItem",
+                  "example": 14
+                },
+                "questions": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idQuestionaire": 11,
+                      "formType": "GBME-11",
+                      "question": "Has your license to practice medicine ever been revoked, suspended, or restricted Or has there been any disciplinary action taken against you in any state or territory?",
+                      "status": 0,
+                      "createdate": "2019-01-22T14:43:28.000Z",
+                      "createdby": null,
+                      "questionDescription": null,
+                      "questionno": null
+                    },
+                    {
+                      "idQuestionaire": 12,
+                      "formType": "GBME-11",
+                      "question": "Have you ever been convicted of any felony or misdemeanor, except for minor traffic violations under the laws of any state or territory?",
+                      "status": 0,
+                      "createdate": "2019-01-22T14:43:28.000Z",
+                      "createdby": null,
+                      "questionDescription": null,
+                      "questionno": null
+                    },
+                    {
+                      "idQuestionaire": 13,
+                      "formType": "GBME-11",
+                      "question": "Has any disciplinary action ever been taken against you by a government agency, Law enforcement agency, any peer review body, healthcare institution, or professional Medical society regarding your clinical or ethical performance as a physician?",
+                      "status": 0,
+                      "createdate": "2019-01-22T14:43:28.000Z",
+                      "createdby": null,
+                      "questionDescription": null,
+                      "questionno": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/reviewapplication": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/reviewapplication"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "title": "StatusItem",
+                  "example": "pending"
+                },
+                "message": {
+                  "type": "string",
+                  "title": "StatusItem",
+                  "example": "This application is not verified"
+                },
+                "Application_id": {
+                  "type": "number",
+                  "title": "StatusItem",
+                  "example": 3
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getallcategory": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "example": [
+                {
+                  "id": 1,
+                  "description": "Category1"
+                },
+                {
+                  "id": 2,
+                  "description": "Category2"
+                },
+                {
+                  "id": 3,
+                  "description": "Category3"
+                },
+                {
+                  "id": 4,
+                  "description": "Category4"
+                },
+                {
+                  "id": 5,
+                  "description": "Category5"
+                },
+                {
+                  "id": 6,
+                  "description": "Category6"
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getuserallform": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "formType",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "applicationid": {
+                  "type": "number",
+                  "example": "11"
+                },
+                "applicant": {
+                  "type": "object",
+                  "title": "StatusItem",
+                  "properties": {
+                    "firstname": {
+                      "type": "string",
+                      "example": "Yaroslav"
+                    },
+                    "userid": {
+                      "type": "number",
+                      "example": "5"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "fgdf@hgf.mj"
+                    }
+                  }
+                },
+                "areaofpractice": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "speciality": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idSpeciality": 625,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "speciality": "my full name",
+                      "dateissued": "2222-02-22T00:00:00.000Z",
+                      "dateexpired": "3333-03-31T00:00:00.000Z"
+                    }
+                  ]
+                },
+                "workhistory": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idWorkHistory": 658,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "fromDate": "1111-11-11T00:00:00.000Z",
+                      "toDate": "2222-02-22T00:00:00.000Z",
+                      "location": "kjh",
+                      "typeOfPractice": "jhk",
+                      "reasonforDiscontinue": "jhk"
+                    }
+                  ]
+                },
+                "education": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": [
+                    {
+                      "idEducation": "685",
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "2222-02-22T00:00:00.000Z",
+                      "degree": "casd",
+                      "type": "medicalSchool",
+                      "photo": ""
+                    },
+                    {
+                      "idEducation": "686",
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "2222-02-22T00:00:00.000Z",
+                      "degree": "casd",
+                      "type": "medicalSchool",
+                      "photo": ""
+                    },
+                    {
+                      "idEducation": 687,
+                      "userid": 5,
+                      "Applicant_seq": 3,
+                      "schoolName": "my full name",
+                      "address": "full street address",
+                      "addressCity": "",
+                      "addressState": "",
+                      "addressZip": "",
+                      "dateEducated": "3333-03-31T00:00:00.000Z",
+                      "degree": "state name",
+                      "type": "postGraduate",
+                      "photo": ""
+                    }
+                  ]
+                },
+                "employmenthistory": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "questionary": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                },
+                "continuingeducation": {
+                  "type": "array",
+                  "title": "StatusItem",
+                  "example": []
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getattachmentlist": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "formType",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "example": [
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "2 X 2 Photo",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "Practice Plan",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "Notarized Copy",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "National Practitioner Data Bank",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "FLEX",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "NBME",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "USMLE",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "American Medical Association",
+                  "status": "true"
+                },
+                {
+                  "ApplicationForm_type": 1,
+                  "attachmentType": "FCVS Attachment",
+                  "status": "true"
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/uploadattachment": {
+      "post": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/uploadattachment"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "title": "StatusItem",
+                  "example": "Document Upload Successfully"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    },
+    "/license-form/getuploadedattachment": {
+      "get": {
+        "tags": [
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "idApplication",
+            "in": "query",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "title": "Status",
+              "example": [
+                {
+                  "idAttachment": 91,
+                  "userid": 5,
+                  "Application_idApplication": 1,
+                  "attachmentType": "2 X 2 Photo",
+                  "status": "attachement",
+                  "attachmentfilename": "http:s3/uploadphoto/abc.jpg"
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "": []
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "server_error_model": {
+      "type": "object",
+      "required": "message",
+      "properties": {
+        "error": {"type": "string"}
+      }
+    },
+    "server_authorization_model":{
+      "type": "object",
+      "required": "message",
+      "properties": {
+        "error": {"type": "string"}
+      }
+    },
+    "server_status_response" :{
+      "properties":{
+        "details": {
+          "properties": {
+            "status": "string",
+            "data": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "type": "object"
+    },
+    "register": {
+      "required": [
+        "email",
+        "familyName",
+        "gender",
+        "custom:role",
+        "password",
+        "phoneNo",
+        "address"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "familyName": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "custom:role": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "phoneNo": {
+          "type": "number"
+        },
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "revieSub": {
+      "properties": {
+        "subForm": {
+          "type": "string"
+        },
+        "acceptableresult": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "login": {
+      "required": [
+        "email,password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "confirmation": {
+      "required": [
+        "email,Pool"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "confirmationCode": {
+          "type": "string"
+        }
+      }
+    },
+    "subAutosave":{
+      "properties":{
+        "applicant": {
+          "type": "object",
+          "title": "StatusItem",
+          "properties": {
+            "firstname": {
+              "type": "string",
+              "example": "Yaroslav"
+            },
+            "userid": {
+              "type": "number",
+              "example": "5"
+            },
+            "email": {
+              "type": "string",
+              "example": "fgdf@hgf.mj"
+            }
+          }
+        },
+        "areaofpractice": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": []
+        },
+        "speciality": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": [
+            {
+              "idSpeciality": 625,
+              "userid": 5,
+              "Applicant_seq": 3,
+              "speciality": "my full name",
+              "dateissued": "2222-02-22T00:00:00.000Z",
+              "dateexpired": "3333-03-31T00:00:00.000Z"
+            }
+          ]
+        },
+        "workhistory": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": [
+            {
+              "idWorkHistory": 658,
+              "userid": 5,
+              "Applicant_seq": 3,
+              "fromDate": "1111-11-11T00:00:00.000Z",
+              "toDate": "2222-02-22T00:00:00.000Z",
+              "location": "kjh",
+              "typeOfPractice": "jhk",
+              "reasonforDiscontinue": "jhk"
+            }
+          ]
+        },
+        "education": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": [
+            {
+              "idEducation": "685",
+              "userid": 5,
+              "Applicant_seq": 3,
+              "schoolName": "my full name",
+              "address": "full street address",
+              "addressCity": "",
+              "addressState": "",
+              "addressZip": "",
+              "dateEducated": "2222-02-22T00:00:00.000Z",
+              "degree": "casd",
+              "type": "medicalSchool",
+              "photo": ""
+            },
+            {
+              "idEducation": "686",
+              "userid": 5,
+              "Applicant_seq": 3,
+              "schoolName": "my full name",
+              "address": "full street address",
+              "addressCity": "",
+              "addressState": "",
+              "addressZip": "",
+              "dateEducated": "2222-02-22T00:00:00.000Z",
+              "degree": "casd",
+              "type": "medicalSchool",
+              "photo": ""
+            },
+            {
+              "idEducation": 687,
+              "userid": 5,
+              "Applicant_seq": 3,
+              "schoolName": "my full name",
+              "address": "full street address",
+              "addressCity": "",
+              "addressState": "",
+              "addressZip": "",
+              "dateEducated": "3333-03-31T00:00:00.000Z",
+              "degree": "state name",
+              "type": "postGraduate",
+              "photo": ""
+            }
+          ]
+        },
+        "employmenthistory": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": []
+        },
+        "questionary": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": []
+        },
+        "continuingeducation": {
+          "type": "array",
+          "title": "StatusItem",
+          "example": []
+        }
+      }
+    },
+    "autosave": {
+      "required": [
+        "formType,data"
+      ],
+      "properties": {
+        "formType": {
+          "type": "number"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/subAutosave"
+          }
+        }
+      }
+    },
+    "changestatus": {
+      "required": [
+        "formType"
+      ],
+      "properties": {
+        "formType": {
+          "type": "string"
+        }
+      }
+    },
+    "reviewapplication": {
+      "required": [
+        "applicationid",
+        "data"
+      ],
+      "properties": {
+        "applicationid": {
+          "type": "number"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/revieSub"
+          }
+        }
+      }
+    },
+    "uploadattachment": {
+      "required": [
+        "Application_idApplication",
+        "attachmentType",
+        "attachmentfilename"
+      ],
+      "properties": {
+        "Application_idApplication": {
+          "type": "number"
+        },
+        "attachmentType": {
+          "type": "string"
+        },
+        "attachmentfilename": {
+          "type": "string"
+        }
+      }
+    },
+    "updateProfile": {
+      "required": [
+        "email",
+        "familyName",
+        "gender",
+        "custom:role",
+        "phoneNo",
+        "address"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "familyName": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "custom:role": {
+          "type": "string"
+        },
+        "phoneNo": {
+          "type": "number"
+        },
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "forgetPassword": {
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "confirmPassword": {
+      "required": [
+        "code,password"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses":{
+    "default_server_error":{
+      "description": "unexpected error",
+      "schema":{ "$ref": "#/definitions/server_error_model"}
+    },
+    "notification_server_response": {
+      "description": "The server status will be returned",
+      "schema":{ "$ref": "#/definitions/server_status_response"}
+    },
+    "server_authorization_error":{
+      "description": "Authorization Error. Thrown if the user does not have access to resource.",
+      "schema":{ "$ref": "#/definitions/server_authorization_model"}
+    }
+  },
+  "securityDefinitions": {
+    "": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

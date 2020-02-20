@@ -3,12 +3,13 @@ import {
   CalendarEvent, CalendarView, CalendarEventTimesChangedEvent, CalendarMonthViewBeforeRenderEvent,
   CalendarWeekViewBeforeRenderEvent, CalendarDateFormatter,
   CalendarDayViewBeforeRenderEvent, CalendarEventTitleFormatter,
-} from "angular-calendar";
+} from 'angular-calendar';
 import {Subject} from 'rxjs';
 import {addDays} from 'date-fns';
 import {CustomDateFormatter} from '../lib/custom-date-formatter.provider';
 import {CustomEventTitleFormatter} from '../lib/tooltip';
-import update from "@angular/cli/commands/update";
+import update from '@angular/cli/commands/update';
+import {CalendarService} from '../service/calendar.service';
 
 @Component({
   selector: 'app-master',
@@ -28,7 +29,7 @@ import update from "@angular/cli/commands/update";
 })
 export class MasterComponent implements OnInit {
 
-  view: CalendarView = CalendarView.Day;
+  view: CalendarView = CalendarView.Week;
 
   colors: any = {
     red: {
@@ -66,7 +67,7 @@ export class MasterComponent implements OnInit {
   eventData: any = {};
 
 
-  constructor() {
+  constructor(private calendarService: CalendarService) {
     this.eventData.allDay = false;
     this.eventData.start = new Date();
     this.eventData.end = new Date();
@@ -74,67 +75,80 @@ export class MasterComponent implements OnInit {
 
   ngOnInit() {
     console.log('hit oninit');
+    this.calendarService.getBlockdates()
+      .subscribe((res) => {
+        console.log('getBlockdates res', res);
+      }, (err) => {
+        console.log('getBlockdates err', err);
+      });
+    this.calendarService.getBookingData()
+      .subscribe((res) => {
+        console.log('getBookingData res', res);
+      }, (err) => {
+        console.log('getBookingData err', err);
+      });
+
     let data = [
       {
-        "text": "event 1",
-        "playerType": "newbie",
-        "startTime": "2020-2-19 10:00",
-        "totalTime": "2",
-        "allDay": true
+        'text': 'event 1',
+        'playerType': 'newbie',
+        'startTime': '2020-2-19 10:00',
+        'totalTime': '2',
+        'allDay': true
       },
       {
-        "text": "event 2",
-        "playerType": "newbie",
-        "startTime": "2020-2-19 10:00",
-        "totalTime": "2",
-        "allDay": true
+        'text': 'event 2',
+        'playerType': 'newbie',
+        'startTime': '2020-2-19 10:00',
+        'totalTime': '2',
+        'allDay': true
       },
       {
-        "text": "event 4",
-        "playerType": "newbie",
-        "startTime": "2020-2-19 11:00",
-        "totalTime": "4",
-        "allDay": true
+        'text': 'event 4',
+        'playerType': 'newbie',
+        'startTime': '2020-2-19 11:00',
+        'totalTime': '4',
+        'allDay': true
       },
       {
-        "text": "event 3",
-        "playerType": "newbie",
-        "startTime": "2020-2-19 10:00",
-        "totalTime": "4",
-        "allDay": true
+        'text': 'event 3',
+        'playerType': 'newbie',
+        'startTime': '2020-2-19 10:00',
+        'totalTime': '4',
+        'allDay': true
       },
       {
-        "text": "event 5",
-        "playerType": "newbie",
-        "startTime": "2020-2-19 12:00",
-        "totalTime": "4",
-        "allDay": true
+        'text': 'event 5',
+        'playerType': 'newbie',
+        'startTime': '2020-2-19 12:00',
+        'totalTime': '4',
+        'allDay': true
       },
       {
-        "text": "event 6",
-        "playerType": "newbie",
-        "startTime": "2020-2-19 11:00",
-        "totalTime": "2",
-        "allDay": true
+        'text': 'event 6',
+        'playerType': 'newbie',
+        'startTime': '2020-2-19 11:00',
+        'totalTime': '2',
+        'allDay': true
       }
     ];
     this.blockDates = [{
-      "date": "2020-2-20",
-      "allDay": true
+      'date': '2020-2-20',
+      'allDay': true
     },
       {
-        "date": "2020-2-21 12:00",
-        "endDate": "2020-2-21 15:00",
-        "allDay": false
+        'date': '2020-2-21 12:00',
+        'endDate': '2020-2-21 15:00',
+        'allDay': false
       },
       {
-        "date": "2020-2-23",
-        "allDay": true
+        'date': '2020-2-23',
+        'allDay': true
       },
       {
-        "date": "2020-2-25 12:00",
-        "endDate": "2020-2-25 15:00",
-        "allDay": false
+        'date': '2020-2-25 12:00',
+        'endDate': '2020-2-25 15:00',
+        'allDay': false
       }];
     (data).forEach((x) => {
       let json = {
@@ -142,6 +156,7 @@ export class MasterComponent implements OnInit {
         color: (x.playerType === 'newbie') ? this.colors.yellow : this.colors.blue,
         start: new Date(x.startTime),
         totalTime: Number(x.totalTime),
+        allDay: x.allDay,
         draggable: true,
         resizable: {
           beforeStart: true, // this allows you to configure the sides the event is resizable from
@@ -276,7 +291,7 @@ export class MasterComponent implements OnInit {
   }
 
   beforeWeekViewRender(renderEvent: CalendarWeekViewBeforeRenderEvent) {
-    console.log('renderEvent', renderEvent);
+    console.log('beforeWeekViewRender');
     renderEvent.hourColumns.forEach(hourColumn => {
       hourColumn.hours.forEach(hour => {
         hour.segments.forEach(segment => {
@@ -287,7 +302,6 @@ export class MasterComponent implements OnInit {
               } else {
                 let n1 = new Date(data[2]).getHours();
                 let n2 = new Date(data[3]).getHours();
-                console.log('n1 n2', n1, n2);
                 if (segment.date.getHours() >= n1 && segment.date.getHours() <= n2) {
                   segment.cssClass = 'bg-pink';
                 }
@@ -332,12 +346,12 @@ export class MasterComponent implements OnInit {
 
       if (d1 === d2 && m1 === m2 && y1 === y2) {
         // console.log('match', d1, d2, m1, m2, y1, y2);
-        callback([date, x.allDay, x.date, x.endDate])
+        callback([date, x.allDay, x.date, x.endDate]);
         flag = false;
       }
     });
     if (flag) {
-      callback([])
+      callback([]);
     }
 
   }
@@ -409,22 +423,39 @@ export class MasterComponent implements OnInit {
                }: CalendarEventTimesChangedEvent): void {
 
     console.log('eventDropped');
+    const that = this;
     this.checkBlockDate(newStart, this.blockDates, function (data) {
       if (data.length <= 0) {
-        this.updateEvent(event, newStart, newEnd, allDay)
+        that.updateEvent(event, newStart, newEnd, allDay);
       } else {
-        if(data[1]){
+        if (data[1]) {
           alert('all Day Block');
+          that.refresh.next();
         } else {
-
+          let n1 = new Date(data[2]).getHours();
+          let n2 = new Date(data[3]).getHours();
+          let n3 = new Date(newStart).getHours();
+          console.log(n1, n2, n3);
+          if (n3 < n1 || n3 > n2) {
+            that.updateEvent(event, newStart, newEnd, allDay);
+          } else {
+            alert('This Time of day is block');
+          }
+          that.refresh.next();
         }
-        let n1 = new Date(data[2]).getHours();
-        let n2 = new Date(data[3]).getHours();
       }
     });
 
   }
 
+
+  getTitle(event) {
+    let str = event.title + '\n' + this.formatAMPM(event.start);
+    if (event.end) {
+      str += ' - ' + this.formatAMPM(event.end);
+    }
+    return str;
+  }
 
   externalDrop(event: CalendarEvent) {
     console.log('externalDrop', event);
@@ -445,7 +476,7 @@ export class MasterComponent implements OnInit {
           console.log('index2', index2);
           this.events = this.events.filter(iEvent => iEvent !== x);
           this.externalEvents.push(x);
-        })
+        });
       } else {
         console.log(flag);
         this.events = this.events.filter(iEvent => iEvent !== event);
@@ -455,7 +486,7 @@ export class MasterComponent implements OnInit {
   }
 
   checkBoxCheck(selectedData) {
-    console.log('checkBoxCheck', selectedData.title)
+    console.log('checkBoxCheck', selectedData.title);
     let flag = true;
 
     (this.selectedEvent).forEach((x, i) => {
@@ -466,8 +497,9 @@ export class MasterComponent implements OnInit {
     });
 
     console.log('flag', flag);
-    if (flag)
+    if (flag) {
       this.selectedEvent.push(selectedData);
+    }
 
     this.selectedEvent2 = this.selectedEvent;
 
@@ -487,7 +519,7 @@ export class MasterComponent implements OnInit {
       }
     }
     return arr;
-  }
+  };
 
   OnDayClickedEvent(date) {
     console.log(date);
@@ -522,5 +554,16 @@ export class MasterComponent implements OnInit {
   onChange(data) {
     console.log('data', data);
     this.eventData.allDay = data;
+  }
+
+  formatAMPM(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
   }
 }
