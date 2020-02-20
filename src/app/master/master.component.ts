@@ -44,7 +44,7 @@ export class MasterComponent implements OnInit {
     }
   };
 
-  viewDate: Date = new Date(2020, 1, 19);
+  viewDate: Date = new Date();
 
   selectedEvent: any = [];
   selectedEvent2: any = [];
@@ -59,11 +59,15 @@ export class MasterComponent implements OnInit {
   refresh: Subject<any> = new Subject();
 
   activeDayIsOpen = false;
-  blockDates = [];
+  weekBlockDates = [];
   display = 'none';
   startValue: Date = new Date();
   eventData: any = {};
   userData: any = {};
+
+  dayStartHour: any = 0;
+  weekStartHour: any = 9;
+  dayBlockTime: any = [];
 
 
   constructor(private calendarService: CalendarService) {
@@ -74,12 +78,7 @@ export class MasterComponent implements OnInit {
 
   ngOnInit() {
     console.log('hit oninit');
-    this.calendarService.getBlockdates()
-      .subscribe((res) => {
-        console.log('getBlockdates res', res);
-      }, (err) => {
-        console.log('getBlockdates err', err);
-      });
+
     this.calendarService.getBookingData()
       .subscribe((res) => {
         console.log('getBookingData res', res);
@@ -87,68 +86,52 @@ export class MasterComponent implements OnInit {
         console.log('getBookingData err', err);
       });
 
+    this.getWorkingHours();
+    this.getBlockDateForWeek();
     let data = [
       {
         'text': 'event 1',
         'playerType': 'newbie',
-        'startTime': '2020-2-19 10:00',
+        'startTime': '2020-2-12 10:00',
         'totalTime': '2',
         'allDay': true
       },
       {
         'text': 'event 2',
         'playerType': 'newbie',
-        'startTime': '2020-2-19 10:00',
+        'startTime': '2020-2-12 10:00',
         'totalTime': '2',
         'allDay': true
       },
       {
         'text': 'event 4',
         'playerType': 'newbie',
-        'startTime': '2020-2-19 11:00',
+        'startTime': '2020-2-12 11:00',
         'totalTime': '4',
         'allDay': true
       },
       {
         'text': 'event 3',
         'playerType': 'newbie',
-        'startTime': '2020-2-19 10:00',
+        'startTime': '2020-2-12 10:00',
         'totalTime': '4',
         'allDay': true
       },
       {
         'text': 'event 5',
         'playerType': 'newbie',
-        'startTime': '2020-2-19 12:00',
+        'startTime': '2020-2-12 12:00',
         'totalTime': '4',
         'allDay': true
       },
       {
         'text': 'event 6',
         'playerType': 'newbie',
-        'startTime': '2020-2-19 11:00',
+        'startTime': '2020-2-12 11:00',
         'totalTime': '2',
         'allDay': true
       }
     ];
-    this.blockDates = [{
-      'date': '2020-2-20',
-      'allDay': true
-    },
-      {
-        'date': '2020-2-21 12:00',
-        'endDate': '2020-2-21 15:00',
-        'allDay': false
-      },
-      {
-        'date': '2020-2-23',
-        'allDay': true
-      },
-      {
-        'date': '2020-2-25 12:00',
-        'endDate': '2020-2-25 15:00',
-        'allDay': false
-      }];
     (data).forEach((x) => {
       let json = {
         title: x.text,
@@ -167,104 +150,6 @@ export class MasterComponent implements OnInit {
       this.events.push(json);
     });
 
-    /*this.events = [
-      {
-        title: 'Event 1',
-        color: this.colors.yellow,
-        myDate: new Date(2020, 1, 19, 10, 0),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 10),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 2',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 10),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 20),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 5',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 20),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 30),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 6',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 30),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 40),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 7',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 40),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 50),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 8',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 50),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 52),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 9',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 52),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 54),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-      {
-        title: 'Event 10',
-        color: this.colors.blue,
-        myDate: new Date(2020, 1, 19, 10, 54),
-        start: new Date(2020, 1, 19, 10, 0),
-        end: new Date(2020, 1, 19, 10, 56),
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      },
-    ];*/
 
     this.externalEvents = [{
       title: 'External Event 1',
@@ -280,6 +165,36 @@ export class MasterComponent implements OnInit {
       }];
   }
 
+  getWorkingHours() {
+    this.calendarService.getWorkingHours()
+      .subscribe((res) => {
+        console.log('getWorkingHours res', res);
+        let index = (this.viewDate).getDay();
+        if (index === 0)
+          index = 7;
+        let data = res.applicantdata.filter(x => x.unique_id === index)[0];
+        this.dayStartHour = (data.opening_hour).split(':')[0];
+        if (data.blocks_blocker) {
+          this.dayBlockTime = JSON.parse(data.blocks_blocker);
+        } else {
+          this.dayBlockTime = [];
+        }
+      }, (err) => {
+        console.log('getBookingData err', err);
+      });
+  }
+
+  getBlockDateForWeek() {
+    console.log('getBlockDateForWeek');
+    this.calendarService.getBlockdates()
+      .subscribe((res) => {
+        console.log('getBlockdates res', res);
+        this.weekBlockDates = res.applicantdata;
+      }, (err) => {
+        console.log('getBlockdates err', err);
+      });
+  }
+
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
       const dayOfMonth = day.date.getDate();
@@ -291,61 +206,97 @@ export class MasterComponent implements OnInit {
 
   beforeWeekViewRender(renderEvent: CalendarWeekViewBeforeRenderEvent) {
     console.log('beforeWeekViewRender');
-    renderEvent.hourColumns.forEach(hourColumn => {
-      hourColumn.hours.forEach(hour => {
-        hour.segments.forEach(segment => {
-          this.checkBlockDate(segment.date, this.blockDates, function (data) {
-            if (data.length > 0) {
-              if (data[1]) {
-                segment.cssClass = 'bg-pink';
-              } else {
-                let n1 = new Date(data[2]).getHours();
-                let n2 = new Date(data[3]).getHours();
-                if (segment.date.getHours() >= n1 && segment.date.getHours() <= n2) {
-                  segment.cssClass = 'bg-pink';
+    const that = this;
+    this.calendarService.getBlockdates()
+      .subscribe((res) => {
+        console.log('getBlockdates res', res);
+        this.weekBlockDates = res.applicantdata;
+
+        renderEvent.hourColumns.forEach(hourColumn => {
+          hourColumn.hours.forEach(hour => {
+            hour.segments.forEach(segment => {
+              that.checkBlockDate(segment.date, that.weekBlockDates, function (data) {
+                if (data.length > 0) {
+                  let str = '';
+                  let hr = new Date(segment.date).getHours();
+                  let min = new Date(segment.date).getMinutes();
+                  if ((hr).toString().length === 1) {
+                    str = '0' + hr.toString();
+                  } else {
+                    str = hr.toString();
+                  }
+                  if ((min).toString().length === 1) {
+                    str += ':' + '0' + min.toString();
+                  } else {
+                    str += ':' + min.toString();
+                  }
+
+                  let checkAry = (data[1].blocks_json);
+                  if(checkAry.includes(str)) {
+                    segment.cssClass = 'bg-pink';
+                  } else {
+
+                  }
+                } else {
+
                 }
-              }
-            } else {
-              if (
-                segment.date.getHours() >= 2 &&
-                segment.date.getHours() <= 5 &&
-                segment.date.getDay() === 2
-              ) {
-                segment.cssClass = 'bg-pink';
-              }
-            }
+              });
+            });
           });
         });
+
+      }, (err) => {
+        console.log('getBlockdates err', err);
       });
-    });
+
   }
 
   beforeDayViewRender(renderEvent: CalendarDayViewBeforeRenderEvent) {
+    this.getWorkingHours();
     renderEvent.hourColumns.forEach(hourColumn => {
       hourColumn.hours.forEach(hour => {
         hour.segments.forEach(segment => {
-          if (segment.date.getHours() >= 2 && segment.date.getHours() <= 5) {
+
+          let str = '';
+          let hr = new Date(segment.date).getHours();
+          let min = new Date(segment.date).getMinutes();
+          if ((hr).toString().length === 1) {
+            str = '0' + hr.toString();
+          } else {
+            str = hr.toString();
+          }
+          if ((min).toString().length === 1) {
+            str += ':' + '0' + min.toString();
+          } else {
+            str += ':' + min.toString();
+          }
+
+          if (this.dayBlockTime.includes(str)) {
             segment.cssClass = 'bg-pink';
           }
+          if (this.dayBlockTime.length === 0) {
+            segment.cssClass = 'bg-pink';
+          }
+          /* if (segment.date.getHours() >= 2 && segment.date.getHours() <= 5) {
+             segment.cssClass = 'bg-pink';
+           }*/
         });
       });
     });
   }
 
   checkBlockDate(date, ary, callback) {
-    // console.log('date', date);
     let d2 = new Date(date).getDate();
     let m2 = new Date(date).getMonth();
     let y2 = new Date(date).getFullYear();
     let flag = true;
     ary.forEach((x) => {
-      let d1 = new Date(x.date).getDate();
-      let m1 = new Date(x.date).getMonth();
-      let y1 = new Date(x.date).getFullYear();
+      let d1 = new Date(x.date_selected).getDate();
+      let m1 = new Date(x.date_selected).getMonth();
+      let y1 = new Date(x.date_selected).getFullYear();
 
       if (d1 === d2 && m1 === m2 && y1 === y2) {
-        // console.log('match', d1, d2, m1, m2, y1, y2);
-        callback([date, x.allDay, x.date, x.endDate]);
+        callback([date, x]);
         flag = false;
       }
     });
@@ -355,7 +306,31 @@ export class MasterComponent implements OnInit {
 
   }
 
+  checkBlockTime(date, ary, callback) {
+    let str = '';
+    console.log('checkBlockTime');
+    let hr = new Date(date).getHours();
+    let min = new Date(date).getMinutes();
+    if ((hr).toString().length === 1) {
+      str = '0' + hr.toString();
+    } else {
+      str = hr.toString();
+    }
+    if ((min).toString().length === 1) {
+      str += ':' + '0' + min.toString();
+    } else {
+      str += ':' + min.toString();
+    }
+    if(ary.includes(str)){
+      callback(true);
+    } else {
+      callback(false);
+    }
+
+  }
+
   handleEvent(action: string, event: CalendarEvent): void {
+    console.log('handleEvent');
     console.log('Event clicked', action);
     console.log('Event clicked', event);
   }
@@ -368,7 +343,6 @@ export class MasterComponent implements OnInit {
     alert('hit');
     event.start = newStart;
     event.end = newEnd;
-    console.log('event', this.events);
     this.refresh.next();
   }
 
@@ -402,7 +376,10 @@ export class MasterComponent implements OnInit {
       if (this.selectedEvent.length > 0) {
         (this.selectedEvent).forEach((x) => {
           (this.events).forEach((y) => {
-            if (x.text === y.title) {
+            if (x.title === y.title) {
+              if (typeof allDay !== 'undefined') {
+                y.allDay = allDay;
+              }
               y.start = newStart;
               y.end = newEnd;
               // y.text = y.text;
@@ -419,32 +396,47 @@ export class MasterComponent implements OnInit {
                  newStart,
                  newEnd,
                  allDay
-               }: CalendarEventTimesChangedEvent): void {
+               }: CalendarEventTimesChangedEvent, type): void {
 
     console.log('eventDropped');
     const that = this;
-    this.checkBlockDate(newStart, this.blockDates, function (data) {
-      if (data.length <= 0) {
-        that.updateEvent(event, newStart, newEnd, allDay);
-      } else {
-        if (data[1]) {
-          alert('all Day Block');
-          that.refresh.next();
+    if(type === 'week') {
+      this.checkBlockDate(newStart, this.weekBlockDates, function (data) {
+        if (data.length <= 0) {
+          that.updateEvent(event, newStart, newEnd, allDay);
         } else {
-          let n1 = new Date(data[2]).getHours();
-          let n2 = new Date(data[3]).getHours();
-          let n3 = new Date(newStart).getHours();
-          console.log(n1, n2, n3);
-          if (n3 < n1 || n3 > n2) {
-            that.updateEvent(event, newStart, newEnd, allDay);
+          let str = '';
+          let hr = new Date(newStart).getHours();
+          let min = new Date(newStart).getMinutes();
+          if ((hr).toString().length === 1) {
+            str = '0' + hr.toString();
           } else {
-            alert('This Time of day is block');
+            str = hr.toString();
           }
-          that.refresh.next();
-        }
-      }
-    });
+          if ((min).toString().length === 1) {
+            str += ':' + '0' + min.toString();
+          } else {
+            str += ':' + min.toString();
+          }
 
+          let checkAry = (data[1].blocks_json);
+          console.log('data', checkAry.length);
+          if(checkAry.includes(str)) {
+            alert('all Day Block');
+          } else {
+            that.updateEvent(event, newStart, newEnd, allDay);
+          }
+        }
+      });
+    } else {
+      this.checkBlockTime(newStart, this.dayBlockTime, function (data) {
+        if(data){
+          alert('Time Block');
+        } else {
+          that.updateEvent(event, newStart, newEnd, allDay);
+        }
+      });
+    }
   }
 
 
@@ -464,20 +456,14 @@ export class MasterComponent implements OnInit {
         flag = true;
       }
     });
-
-    console.log('flag', flag);
     if (this.externalEvents.indexOf(event) === -1) {
       if (flag) {
-        console.log(flag);
         (this.selectedEvent2).forEach((x) => {
-          console.log('x', x);
           const index2 = this.events.indexOf(x);
-          console.log('index2', index2);
           this.events = this.events.filter(iEvent => iEvent !== x);
           this.externalEvents.push(x);
         });
       } else {
-        console.log(flag);
         this.events = this.events.filter(iEvent => iEvent !== event);
         this.externalEvents.push(event);
       }
@@ -485,7 +471,7 @@ export class MasterComponent implements OnInit {
   }
 
   checkBoxCheck(selectedData) {
-    console.log('checkBoxCheck', selectedData.title);
+    console.log('checkBoxCheck');
     let flag = true;
 
     (this.selectedEvent).forEach((x, i) => {
@@ -495,15 +481,11 @@ export class MasterComponent implements OnInit {
       }
     });
 
-    console.log('flag', flag);
     if (flag) {
       this.selectedEvent.push(selectedData);
     }
 
     this.selectedEvent2 = this.selectedEvent;
-
-    console.log('this.selectedEvent', this.selectedEvent);
-    console.log('this.selectedEvent2', this.selectedEvent2);
   }
 
   removeByAttr = function (arr, attr, value) {
@@ -520,10 +502,14 @@ export class MasterComponent implements OnInit {
     return arr;
   };
 
-  OnDayClickedEvent(date) {
-    console.log(date);
-    this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
-    this.display = 'block';
+  OnDayClickedEvent(date, event) {
+    console.log('OnDayClickedEvent');
+    if (!(event.sourceEvent.toElement.className).includes('bg-pink')){
+      this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+      this.display = 'block';
+    } else {
+      alert('please select other day, this time is block')
+    }
   }
 
   onCloseHandled() {
@@ -531,7 +517,7 @@ export class MasterComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('this.eventData', this.eventData);
+    console.log('onSubmit', this.eventData);
     this.display = 'none';
     let json = {
       title: this.eventData.title,
@@ -546,13 +532,12 @@ export class MasterComponent implements OnInit {
       }
     };
     this.events.push(json);
-    console.log('this.events', this.events);
     this.eventData = {};
     this.refresh.next();
   }
 
   onChange(data) {
-    console.log('data', data);
+    console.log('onChange', data);
     this.eventData.allDay = data;
   }
 

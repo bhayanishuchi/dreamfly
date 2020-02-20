@@ -1607,7 +1607,7 @@ const insertUserQuery = function (data, cb) {
 
 
 
-
+// ====================================================================================================
 const findAllBlockDates = function (cb) {
   const query = `Select * from xyz_blocks_blocker_cutsom`;
   try {

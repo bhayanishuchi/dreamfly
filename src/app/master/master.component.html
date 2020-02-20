@@ -50,9 +50,14 @@
              [ngStyle]="{'background-color': weekEvent.event.color.secondary, 'border-color': weekEvent.event.color.primary}">
           <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span
           style="color: #1e90ff"> {{weekEvent.event.title}}</span>
-          <!-- <div style="font-size: 10px;">{{weekEvent.event.start | date: 'longDate'}}</div>
-           <div style="font-size: 10px;">{{weekEvent.event.myDate | date: 'HH:mm'}}
-             - {{weekEvent.event.end | date: 'HH:mm'}}</div>-->
+        </div>
+      </ng-template>
+      <ng-template #eventWeekTemplate let-weekEvent="weekEvent">
+        <div [title]="getTitle(weekEvent.event)"
+             style="border: 1px solid;"
+             [ngStyle]="{'background-color': weekEvent.event.color.secondary, 'border-color': weekEvent.event.color.primary}">
+          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span
+          style="color: #1e90ff"> {{weekEvent.event.title}}</span>
         </div>
       </ng-template>
 
@@ -64,7 +69,7 @@
           (columnHeaderClicked)="clickedColumn = $event.isoDayNumber"
           (dayClicked)="clickedDate = $event.day.date"
           (eventClicked)="handleEvent('Clicked', $event.event)"
-          (eventTimesChanged)="eventDropped($event)"
+          (eventTimesChanged)="eventDropped($event, 'month')"
           [activeDayIsOpen]="activeDayIsOpen"
           [refresh]="refresh">
         </mwl-calendar-month-view>
@@ -74,14 +79,14 @@
           *ngSwitchCase="'week'"
           [viewDate]="viewDate"
           [events]="events"
-          [eventTemplate]="eventTemplate"
+          [eventTemplate]="eventWeekTemplate"
           (dayHeaderClicked)="clickedDate = $event.day.date"
-          (hourSegmentClicked)="OnDayClickedEvent(clickedDate = $event.date)"
+          (hourSegmentClicked)="OnDayClickedEvent(clickedDate = $event.date, $event)"
           (beforeViewRender)="beforeWeekViewRender($event)"
           [snapDraggedEvents]="false"
           (eventClicked)="handleEvent('Clicked', $event.event)"
-          (eventTimesChanged)="eventDropped($event)"
-          [dayStartHour]="2"
+          (eventTimesChanged)="eventDropped($event, 'week')"
+          [dayStartHour]="weekStartHour"
           [refresh]="refresh">
         </mwl-calendar-week-view>
         <mwl-calendar-day-view
@@ -90,10 +95,10 @@
           [viewDate]="viewDate"
           [events]="events"
           [eventTemplate]="eventTemplate"
-          [dayStartHour]="9"
-          (hourSegmentClicked)="OnDayClickedEvent(clickedDate = $event.date)"
+          [dayStartHour]="dayStartHour"
+          (hourSegmentClicked)="OnDayClickedEvent(clickedDate = $event.date,$event)"
           (eventClicked)="handleEvent('Clicked', $event.event)"
-          (eventTimesChanged)="eventDropped($event)"
+          (eventTimesChanged)="eventDropped($event, 'day')"
           [snapDraggedEvents]="false"
           (beforeViewRender)="beforeDayViewRender($event)"
           [refresh]="refresh">

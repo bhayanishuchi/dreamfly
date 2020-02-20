@@ -18,4 +18,7 @@ export class CalendarService {
   getBookingData() {
     return this.http.get<any>(this.api + '/getBookingData');
   }
+  getWorkingHours() {
+    return this.http.get<any>(this.api + '/getWorkingHours');
+  }
 }
