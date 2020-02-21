@@ -44,8 +44,8 @@
       </h4>
       <hr>
 
-      <ng-template #eventTemplate let-weekEvent="weekEvent">
-        <div [title]="getTitle(weekEvent.event)"
+      <ng-template #dayEventTemplate let-weekEvent="weekEvent">
+        <div [title]="getTitle(weekEvent.event)" (click)="onEventEdit(weekEvent.event)"
              [ngClass]="(weekEvent.event.totalTime === 2) ? 'two-min-width' : 'four-min-width'"
              [ngStyle]="{'background-color': weekEvent.event.color.secondary, 'border-color': weekEvent.event.color.primary}">
           <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span
@@ -94,7 +94,7 @@
           time
           [viewDate]="viewDate"
           [events]="events"
-          [eventTemplate]="eventTemplate"
+          [eventTemplate]="dayEventTemplate"
           [dayStartHour]="dayStartHour"
           (hourSegmentClicked)="OnDayClickedEvent(clickedDate = $event.date,$event)"
           (eventClicked)="handleEvent('Clicked', $event.event)"
@@ -130,16 +130,16 @@
                 <div class="card-body">
                   <form>
                     <div class="form-group">
-                      <label>Name</label>
-                      <input type="text" class="form-control" name="name" [(ngModel)]="userData.name">
+                      <label>First Name</label>
+                      <input type="text" class="form-control" name="firstname" [(ngModel)]="userData.firstname">
                     </div>
                     <div class="form-group">
-                      <label>Last name</label>
+                      <label>Last Name</label>
                       <input type="text" class="form-control" name="lastname" [(ngModel)]="userData.lastname">
                     </div>
                     <div class="form-group">
-                      <label>Phone</label>
-                      <input type="number" class="form-control" name="phone" [(ngModel)]="userData.phone">
+                      <label>Phone No.</label>
+                      <input type="number" class="form-control" name="phonenumber" [(ngModel)]="userData.phonenumber">
                     </div>
                     <div class="form-group">
                       <label>email</label>
@@ -155,20 +155,36 @@
               <div class="card">
                 <div class="card-body">
                   <form>
-                    <div class="form-group">
-                      <label>Product name</label>
-                      <input type="text" class="form-control" name="product_name" [(ngModel)]="eventData.product_name">
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label>Product name</label>
+                        <select name="product_name" [(ngModel)]="eventData.product_name" class="form-control">
+                          <option value="Friends Fly">Friends Fly</option>
+                          <option value="Adults Fly">Adults Fly</option>
+                          <option value="Kids Fly">Kids Fly</option>
+                          <option value="Family Fly">Family Fly</option>
+                        </select>
+<!--                        <input type="text" class="form-control" name="product_name" [(ngModel)]="eventData.product_name">-->
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label>Product Type</label>
+                        <select name="product_type" [(ngModel)]="eventData.product_type" class="form-control">
+                          <option value="pro_flyer">Pro Flyer</option>
+                          <option value="first_timer">First Timer</option>
+                        </select>
+                      </div>
                     </div>
+
                     <div class="form-group">
                       <label>Duration</label>
-                      <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.duration">
+                      <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.product_duration">
                     </div>
                     <div class="form-row">
                       <div class="form-group col-md-6">
                         <label>Booking date </label>
                         <dx-date-box
                           [(min)]="startValue"
-                          [(value)]="eventData.booking_date">
+                          [(value)]="eventData.date_selected">
                         </dx-date-box>
                       </div>
                       <div class="form-group col-md-6">
@@ -176,13 +192,7 @@
                           <input type="text" class="form-control" name="time_slots" [(ngModel)]="eventData.time_slots">
                       </div>
                     </div>
-                    <div class="form-group">
-                      <label>Select Color</label>
-                      <select name="color" [(ngModel)]="eventData.color" class="form-control">
-                        <option value="blue">Blue</option>
-                        <option value="yellow">Yellow</option>
-                      </select>
-                    </div>
+
                   </form>
                 </div>
               </div>
@@ -191,7 +201,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="onCloseHandled()">Book</button>
+        <button type="button" class="btn btn-outline-primary" (click)="onSubmit()">Book</button>
+        <button type="button" class="btn btn-outline-danger" (click)="onCloseHandled()">Cancel</button>
       </div>
     </div>
   </div>

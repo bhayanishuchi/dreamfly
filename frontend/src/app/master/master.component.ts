@@ -27,8 +27,7 @@ import {CalendarService} from '../service/calendar.service';
 })
 export class MasterComponent implements OnInit {
 
-  view: CalendarView = CalendarView.Week;
-
+  view: CalendarView = CalendarView.Day;
   colors: any = {
     red: {
       primary: '#ad2121',
@@ -43,28 +42,20 @@ export class MasterComponent implements OnInit {
       secondary: '#FDF1BA'
     }
   };
-
   viewDate: Date = new Date();
-
   selectedEvent: any = [];
   selectedEvent2: any = [];
-
   events = [];
   externalEvents: CalendarEvent[] = [];
-
   clickedDate: Date;
-
   clickedColumn: number;
-
   refresh: Subject<any> = new Subject();
-
   activeDayIsOpen = false;
   weekBlockDates = [];
   display = 'none';
   startValue: Date = new Date();
   eventData: any = {};
   userData: any = {};
-
   dayStartHour: any = 0;
   weekStartHour: any = 9;
   dayBlockTime: any = [];
@@ -157,6 +148,12 @@ export class MasterComponent implements OnInit {
             title: x.firstname + ' ' + x.lastname,
             color: (x.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue,
             start: date,
+            product_type: x.product_type,
+            product_name: x.product_name,
+            firstname: x.firstname,
+            lastname: x.lastname,
+            phonenumber: x.phonenumber,
+            email: x.email,
             totalTime: Number(x.product_duration),
             draggable: true,
             resizable: {
@@ -525,28 +522,15 @@ export class MasterComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('onSubmit', this.eventData);
+    this.eventData['booking_type'] = 'booking';
+    let json = {};
+    json['eventData'] = this.eventData;
+    json['userData'] = this.userData;
+    console.log('onSubmit', json);
     this.display = 'none';
-    let json = {
-      title: this.eventData.title,
-      color: this.colors[this.eventData.color],
-      start: new Date(this.eventData.start),
-      end: new Date(this.eventData.end),
-      allDay: this.eventData.allDay,
-      draggable: true,
-      resizable: {
-        beforeStart: true, // this allows you to configure the sides the event is resizable from
-        afterEnd: true
-      }
-    };
-    this.events.push(json);
     this.eventData = {};
+    this.userData = {};
     this.refresh.next();
-  }
-
-  onChange(data) {
-    console.log('onChange', data);
-    this.eventData.allDay = data;
   }
 
   formatAMPM(date) {
@@ -558,5 +542,17 @@ export class MasterComponent implements OnInit {
     minutes = minutes < 10 ? '0' + minutes : minutes;
     const strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
+  }
+
+  onEventEdit(weekEvent) {
+    console.log('event', weekEvent);
+    this.display = 'block';
+    this.eventData = weekEvent;
+    this.userData = weekEvent;
+    this.eventData.time_slots = new Date(weekEvent.start).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+    let year = new Date(weekEvent.start).getFullYear();
+    let month = new Date(weekEvent.start).getMonth();
+    let date = new Date(weekEvent.start).getDate();
+    this.eventData.date_selected = new Date(year, month, date);
   }
 }

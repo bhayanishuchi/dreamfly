@@ -29,6 +29,7 @@
  /*tab css*/
 .nav-tabs {
   width: 100%;
+  background: #0000001c;
 }
 .nav-item {
   width: 50%;
@@ -65,4 +66,7 @@ ul li.nav-item a.nav-link:focus
   color:black;
   border-radius:0;
 
+}
+.modal {
+  overflow: scroll;
 }
