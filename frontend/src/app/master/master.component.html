@@ -36,10 +36,17 @@
       </small></h4>
       <hr>
       <h4>
-        <div class="alert alert-info">
+        <!--<div class="alert alert-info">
           Click on a day or time slot on the view.
           <strong *ngIf="clickedDate">You clicked on this time: {{ clickedDate | date:'medium' }}</strong>
           <strong *ngIf="clickedColumn != null">You clicked on this column: {{ clickedColumn }}</strong>
+        </div> -->
+        <div class="alert alert-info">
+          Filters:
+          <!--<div class="col-md-3"><input class="form-control" type="date"></div>
+          <div class="col-md-3"><input class="form-control" type="text" placeholder="Search by Text"></div>-->
+          <input class="form-control" (change)="clickedDate = $event.day.date" type="date">
+          <input class="form-control" type="text" placeholder="Search by Text">
         </div>
       </h4>
       <hr>

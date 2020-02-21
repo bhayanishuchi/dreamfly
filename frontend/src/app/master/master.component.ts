@@ -42,7 +42,7 @@ export class MasterComponent implements OnInit {
       secondary: '#FDF1BA'
     }
   };
-  viewDate: Date = new Date();
+  viewDate: Date = new Date(2020, 0, 31);
   selectedEvent: any = [];
   selectedEvent2: any = [];
   events = [];
@@ -53,7 +53,7 @@ export class MasterComponent implements OnInit {
   activeDayIsOpen = false;
   weekBlockDates = [];
   display = 'none';
-  startValue: Date = new Date();
+  startValue: Date = new Date(2020, 0, 31);
   eventData: any = {};
   userData: any = {};
   dayStartHour: any = 0;
@@ -74,52 +74,6 @@ export class MasterComponent implements OnInit {
     this.getWorkingHours();
     this.getBlockDateForWeek();
     this.getEventData();
-    let data = [
-      {
-        'text': 'event 1',
-        'playerType': 'newbie',
-        'startTime': '2020-2-12 10:00',
-        'totalTime': '2',
-        'allDay': true
-      },
-      {
-        'text': 'event 2',
-        'playerType': 'newbie',
-        'startTime': '2020-2-12 10:00',
-        'totalTime': '2',
-        'allDay': true
-      },
-      {
-        'text': 'event 4',
-        'playerType': 'newbie',
-        'startTime': '2020-2-12 11:00',
-        'totalTime': '4',
-        'allDay': true
-      },
-      {
-        'text': 'event 3',
-        'playerType': 'newbie',
-        'startTime': '2020-2-12 10:00',
-        'totalTime': '4',
-        'allDay': true
-      },
-      {
-        'text': 'event 5',
-        'playerType': 'newbie',
-        'startTime': '2020-2-12 12:00',
-        'totalTime': '4',
-        'allDay': true
-      },
-      {
-        'text': 'event 6',
-        'playerType': 'newbie',
-        'startTime': '2020-2-12 11:00',
-        'totalTime': '2',
-        'allDay': true
-      }
-    ];
-
-
     this.externalEvents = [{
       title: 'External Event 1',
       color: this.colors.yellow,
@@ -138,13 +92,12 @@ export class MasterComponent implements OnInit {
     this.calendarService.getBookingData()
       .subscribe((res) => {
         console.log('getBookingData res', res);
+        this.events = [];
         (res.applicantdata).forEach((x) => {
-          let date = new Date(x.date_selected);
-          console.log('date', date);
-          let str = (x.time_slots).split(':')
+          const date = new Date(x.date_selected);
+          const str = (x.time_slots).split(':');
           date.setHours(str[0], str[1], str[2]);
-          console.log('date', date);
-          let json = {
+          const json = {
             title: x.firstname + ' ' + x.lastname,
             color: (x.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue,
             start: date,
@@ -157,7 +110,7 @@ export class MasterComponent implements OnInit {
             totalTime: Number(x.product_duration),
             draggable: true,
             resizable: {
-              beforeStart: true, // this allows you to configure the sides the event is resizable from
+              beforeStart: true,
               afterEnd: true
             }
           };
@@ -175,9 +128,10 @@ export class MasterComponent implements OnInit {
       .subscribe((res) => {
         console.log('getWorkingHours res', res);
         let index = (this.viewDate).getDay();
-        if (index === 0)
+        if (index === 0) {
           index = 7;
-        let data = res.applicantdata.filter(x => x.unique_id === index)[0];
+        }
+        const data = res.applicantdata.filter(x => x.unique_id === index)[0];
         this.dayStartHour = (data.opening_hour).split(':')[0];
         if (data.blocks_blocker) {
           this.dayBlockTime = JSON.parse(data.blocks_blocker);
@@ -258,13 +212,14 @@ export class MasterComponent implements OnInit {
 
   beforeDayViewRender(renderEvent: CalendarDayViewBeforeRenderEvent) {
     this.getWorkingHours();
+    // this.getEventData();
     renderEvent.hourColumns.forEach(hourColumn => {
       hourColumn.hours.forEach(hour => {
         hour.segments.forEach(segment => {
 
           let str = '';
-          let hr = new Date(segment.date).getHours();
-          let min = new Date(segment.date).getMinutes();
+          const hr = new Date(segment.date).getHours();
+          const min = new Date(segment.date).getMinutes();
           if ((hr).toString().length === 1) {
             str = '0' + hr.toString();
           } else {
@@ -282,23 +237,34 @@ export class MasterComponent implements OnInit {
           if (this.dayBlockTime.length === 0) {
             segment.cssClass = 'bg-pink';
           }
-          /* if (segment.date.getHours() >= 2 && segment.date.getHours() <= 5) {
-             segment.cssClass = 'bg-pink';
-           }*/
         });
       });
     });
   }
 
+
+  onSearchFilter() {
+    this.calendarService.searchFilter('2020-01-31', 'Carlos')
+      .subscribe((res) => {
+        console.log('search Filterres', res);
+      }, (err) => {
+        console.log('searchFilter err', err);
+      });
+  }
+
+  onSelectDate(date) {
+    // this.clickedDate = new Date(2020, 03, 25);
+  }
+
   checkBlockDate(date, ary, callback) {
-    let d2 = new Date(date).getDate();
-    let m2 = new Date(date).getMonth();
-    let y2 = new Date(date).getFullYear();
+    const d2 = new Date(date).getDate();
+    const m2 = new Date(date).getMonth();
+    const y2 = new Date(date).getFullYear();
     let flag = true;
     ary.forEach((x) => {
-      let d1 = new Date(x.date_selected).getDate();
-      let m1 = new Date(x.date_selected).getMonth();
-      let y1 = new Date(x.date_selected).getFullYear();
+      const d1 = new Date(x.date_selected).getDate();
+      const m1 = new Date(x.date_selected).getMonth();
+      const y1 = new Date(x.date_selected).getFullYear();
 
       if (d1 === d2 && m1 === m2 && y1 === y2) {
         callback([date, x]);
@@ -314,8 +280,8 @@ export class MasterComponent implements OnInit {
   checkBlockTime(date, ary, callback) {
     let str = '';
     console.log('checkBlockTime');
-    let hr = new Date(date).getHours();
-    let min = new Date(date).getMinutes();
+    const hr = new Date(date).getHours();
+    const min = new Date(date).getMinutes();
     if ((hr).toString().length === 1) {
       str = '0' + hr.toString();
     } else {

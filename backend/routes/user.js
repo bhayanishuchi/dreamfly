@@ -7,6 +7,8 @@ const {isReviewer, isUser, isAdmin} = require('../controllers/aws/aws_cognito');
 router.get('/getBlockDate', userController.getBlockDate);
 router.get('/getBookingData', userController.getBookingData);
 router.get('/getWorkingHours', userController.getWorkingHours);
+router.get('/getBookingDetails', userController.getBookingDetails);
+router.get('/createNewBooking', userController.generateBooking);
 
 router.post('/', userController.createuser);    // create user or sign up : {email, password, userName}
 router.post('/autosave', isUser(), userController.autosave);    // Auto Save API

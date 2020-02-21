@@ -15,10 +15,16 @@ export class CalendarService {
   getBlockdates() {
     return this.http.get<any>(this.api + '/getBlockDate');
   }
+
   getBookingData() {
     return this.http.get<any>(this.api + '/getBookingData');
   }
+
   getWorkingHours() {
     return this.http.get<any>(this.api + '/getWorkingHours');
+  }
+
+  searchFilter(date, name) {
+    return this.http.get<any>(this.api + '/getBookingDetails?search_date=' + date + '&name=' + name);
   }
 }
