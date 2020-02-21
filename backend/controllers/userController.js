@@ -1607,53 +1607,7 @@ const insertUserQuery = function (data, cb) {
 
 
 
-// ====================================================================================================
-const findAllBlockDates = function (cb) {
-  const query = `Select * from xyz_blocks_blocker_cutsom`;
-  try {
-    mysql(query, [], function (err, userData) {
-      if (err) {
-        cb(err, null)
-      } else {
-        cb(null, userData)
-      }
-    });
-  } catch (e) {
-    cb(e, null);
-  }
-}
 
-const findAllBookingData = function (cb) {
-  const query = `Select * from xyz_order_user_booking_details`;
-  try {
-    mysql(query, [], function (err, userData) {
-      if (err) {
-        cb(err, null)
-      } else {
-        cb(null, userData)
-      }
-    });
-  } catch (e) {
-    cb(e, null);
-  }
-}
-
-const findWorkingHours = function (cb) {
-  const query = `Select * from xyz_working_hours`;
-  try {
-    mysql(query, [], function (err, userData) {
-      if (err) {
-        cb(err, null)
-      } else {
-        cb(null, userData)
-      }
-    });
-  } catch (e) {
-    cb(e, null);
-  }
-}
-
-// ====================================================================================================
 
 exports.UpdateUserIsConfirmQuery = function (data, cb) {
   const query = 'UPDATE users SET isConfirm="true" Where global_id=' + '\'' + data.sub + '\'';
@@ -1846,42 +1800,6 @@ exports.autosave = (req, res) => {
           })
         }
       })
-    }
-  })
-}
-
-exports.getBlockDate = (req, res) => {
-  findAllBlockDates(function (err, userData) {
-    if (err) {
-      errorResponse.queryError(err, function (data) {
-        res.status(400).send(data)
-      })
-    } else {
-      res.status(200).send({applicantdata: userData})
-    }
-  })
-}
-
-exports.getBookingData = (req, res) => {
-  findAllBookingData(function (err, userData) {
-    if (err) {
-      errorResponse.queryError(err, function (data) {
-        res.status(400).send(data)
-      })
-    } else {
-      res.status(200).send({applicantdata: userData})
-    }
-  })
-}
-
-exports.getWorkingHours = (req, res) => {
-  findWorkingHours(function (err, userData) {
-    if (err) {
-      errorResponse.queryError(err, function (data) {
-        res.status(400).send(data)
-      })
-    } else {
-      res.status(200).send({applicantdata: userData})
     }
   })
 }
@@ -2787,3 +2705,99 @@ exports.testemail = (req, res) => {
   })
 
 }
+
+
+
+
+
+
+
+
+
+
+
+// =================================================================================================================
+
+exports.getBlockDate = (req, res) => {
+  findAllBlockDates(function (err, userData) {
+    if (err) {
+      errorResponse.queryError(err, function (data) {
+        res.status(400).send(data)
+      })
+    } else {
+      res.status(200).send({applicantdata: userData})
+    }
+  })
+};
+
+exports.getBookingData = (req, res) => {
+  findAllBookingData(function (err, userData) {
+    if (err) {
+      errorResponse.queryError(err, function (data) {
+        res.status(400).send(data)
+      })
+    } else {
+      res.status(200).send({applicantdata: userData})
+    }
+  })
+};
+
+exports.getWorkingHours = (req, res) => {
+  findWorkingHours(function (err, userData) {
+    if (err) {
+      errorResponse.queryError(err, function (data) {
+        res.status(400).send(data)
+      })
+    } else {
+      res.status(200).send({applicantdata: userData})
+    }
+  })
+};
+
+// ====================================================================================================
+const findAllBlockDates = function (cb) {
+  const query = `Select * from xyz_blocks_blocker_cutsom`;
+  try {
+    mysql(query, [], function (err, userData) {
+      if (err) {
+        cb(err, null)
+      } else {
+        cb(null, userData)
+      }
+    });
+  } catch (e) {
+    cb(e, null);
+  }
+};
+
+const findAllBookingData = function (cb) {
+  const query = `SELECT b.order_id,b.user_id, b.booking_type, b.date_selected, b.time_slots, b.quantity, b.product_id, b.product_type, b.product_name,b.product_name_pt, b.product_usages, b.product_duration,b.date_added,u.title, u.firstname, u.lastname, u.birthdate,u.country,u.dialing_code,u.phonenumber,u.email  FROM xyz_order_user_booking_details b JOIN xyz_order_user_details u where u.order_id = b.order_id;`;
+  try {
+    mysql(query, [], function (err, userData) {
+      if (err) {
+        cb(err, null)
+      } else {
+        cb(null, userData)
+      }
+    });
+  } catch (e) {
+    cb(e, null);
+  }
+};
+
+const findWorkingHours = function (cb) {
+  const query = `Select * from xyz_working_hours`;
+  try {
+    mysql(query, [], function (err, userData) {
+      if (err) {
+        cb(err, null)
+      } else {
+        cb(null, userData)
+      }
+    });
+  } catch (e) {
+    cb(e, null);
+  }
+};
+
+// ====================================================================================================

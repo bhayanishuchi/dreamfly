@@ -79,15 +79,10 @@ export class MasterComponent implements OnInit {
   ngOnInit() {
     console.log('hit oninit');
 
-    this.calendarService.getBookingData()
-      .subscribe((res) => {
-        console.log('getBookingData res', res);
-      }, (err) => {
-        console.log('getBookingData err', err);
-      });
 
     this.getWorkingHours();
     this.getBlockDateForWeek();
+    this.getEventData();
     let data = [
       {
         'text': 'event 1',
@@ -132,23 +127,6 @@ export class MasterComponent implements OnInit {
         'allDay': true
       }
     ];
-    (data).forEach((x) => {
-      let json = {
-        title: x.text,
-        color: (x.playerType === 'newbie') ? this.colors.yellow : this.colors.blue,
-        start: new Date(x.startTime),
-        totalTime: Number(x.totalTime),
-        allDay: x.allDay,
-        draggable: true,
-        resizable: {
-          beforeStart: true, // this allows you to configure the sides the event is resizable from
-          afterEnd: true
-        }
-      };
-      /*if (x.endTime)
-        json['end'] = new Date(x.endTime);*/
-      this.events.push(json);
-    });
 
 
     this.externalEvents = [{
@@ -163,6 +141,36 @@ export class MasterComponent implements OnInit {
         start: new Date(),
         draggable: true
       }];
+  }
+
+  getEventData() {
+    this.calendarService.getBookingData()
+      .subscribe((res) => {
+        console.log('getBookingData res', res);
+        (res.applicantdata).forEach((x) => {
+          let date = new Date(x.date_selected);
+          console.log('date', date);
+          let str = (x.time_slots).split(':')
+          date.setHours(str[0], str[1], str[2]);
+          console.log('date', date);
+          let json = {
+            title: x.firstname + ' ' + x.lastname,
+            color: (x.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue,
+            start: date,
+            totalTime: Number(x.product_duration),
+            draggable: true,
+            resizable: {
+              beforeStart: true, // this allows you to configure the sides the event is resizable from
+              afterEnd: true
+            }
+          };
+          /*if (x.endTime)
+            json['end'] = new Date(x.endTime);*/
+          this.events.push(json);
+        });
+      }, (err) => {
+        console.log('getBookingData err', err);
+      });
   }
 
   getWorkingHours() {
@@ -232,7 +240,7 @@ export class MasterComponent implements OnInit {
                   }
 
                   let checkAry = (data[1].blocks_json);
-                  if(checkAry.includes(str)) {
+                  if (checkAry.includes(str)) {
                     segment.cssClass = 'bg-pink';
                   } else {
 
@@ -321,7 +329,7 @@ export class MasterComponent implements OnInit {
     } else {
       str += ':' + min.toString();
     }
-    if(ary.includes(str)){
+    if (ary.includes(str)) {
       callback(true);
     } else {
       callback(false);
@@ -400,7 +408,7 @@ export class MasterComponent implements OnInit {
 
     console.log('eventDropped');
     const that = this;
-    if(type === 'week') {
+    if (type === 'week') {
       this.checkBlockDate(newStart, this.weekBlockDates, function (data) {
         if (data.length <= 0) {
           that.updateEvent(event, newStart, newEnd, allDay);
@@ -421,7 +429,7 @@ export class MasterComponent implements OnInit {
 
           let checkAry = (data[1].blocks_json);
           console.log('data', checkAry.length);
-          if(checkAry.includes(str)) {
+          if (checkAry.includes(str)) {
             alert('all Day Block');
           } else {
             that.updateEvent(event, newStart, newEnd, allDay);
@@ -430,7 +438,7 @@ export class MasterComponent implements OnInit {
       });
     } else {
       this.checkBlockTime(newStart, this.dayBlockTime, function (data) {
-        if(data){
+        if (data) {
           alert('Time Block');
         } else {
           that.updateEvent(event, newStart, newEnd, allDay);
@@ -449,7 +457,7 @@ export class MasterComponent implements OnInit {
   }
 
   externalDrop(event: CalendarEvent) {
-    console.log('externalDrop', event);
+    alert('externalDrop' + event);
     let flag = false;
     (this.selectedEvent2).forEach((p) => {
       if (p.title === event.title) {
@@ -504,7 +512,7 @@ export class MasterComponent implements OnInit {
 
   OnDayClickedEvent(date, event) {
     console.log('OnDayClickedEvent');
-    if (!(event.sourceEvent.toElement.className).includes('bg-pink')){
+    if (!(event.sourceEvent.toElement.className).includes('bg-pink')) {
       this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
       this.display = 'block';
     } else {
