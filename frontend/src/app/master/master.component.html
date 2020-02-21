@@ -41,18 +41,24 @@
           <strong *ngIf="clickedDate">You clicked on this time: {{ clickedDate | date:'medium' }}</strong>
           <strong *ngIf="clickedColumn != null">You clicked on this column: {{ clickedColumn }}</strong>
         </div> -->
-        <div class="alert alert-info">
-          Filters:
-          <!--<div class="col-md-3"><input class="form-control" type="date"></div>
-          <div class="col-md-3"><input class="form-control" type="text" placeholder="Search by Text"></div>-->
-          <input class="form-control" (change)="clickedDate = $event.day.date" type="date">
-          <input class="form-control" type="text" placeholder="Search by Text">
+        <div class="alert alert-info row">
+          <div class="col-md-3"><label>Filters:</label></div>
+          <div class="col-md-3">
+            <input class="form-control" (change)="onDateChange($event)" [(ngModel)]="searchData.date" type="date">
+          </div>
+          <div class="col-md-3">
+            <input class="form-control" type="text" placeholder="Search by Text" [(ngModel)]="searchData.text">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-outline-primary" (click)="onSearchFilter()">Search</button>
+          </div>
         </div>
       </h4>
       <hr>
 
       <ng-template #dayEventTemplate let-weekEvent="weekEvent">
-        <div [title]="getTitle(weekEvent.event)" (click)="onEventEdit(weekEvent.event)"
+        <div [title]="getTitle(weekEvent.event)" (click)="onEventEdit(weekEvent.event)" id="event"
+             [class.event-active]="classApply==true"
              [ngClass]="(weekEvent.event.totalTime === 2) ? 'two-min-width' : 'four-min-width'"
              [ngStyle]="{'background-color': weekEvent.event.color.secondary, 'border-color': weekEvent.event.color.primary}">
           <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span

@@ -59,7 +59,8 @@ export class MasterComponent implements OnInit {
   dayStartHour: any = 0;
   weekStartHour: any = 9;
   dayBlockTime: any = [];
-
+  searchData: any = {};
+  classApply = false;
 
   constructor(private calendarService: CalendarService) {
     this.eventData.allDay = false;
@@ -68,7 +69,7 @@ export class MasterComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('hit oninit');
+    console.log('hit oninit', this.clickedDate);
 
 
     this.getWorkingHours();
@@ -244,9 +245,12 @@ export class MasterComponent implements OnInit {
 
 
   onSearchFilter() {
-    this.calendarService.searchFilter('2020-01-31', 'Carlos')
+    this.calendarService.searchFilter(this.searchData.date, this.searchData.text)
       .subscribe((res) => {
         console.log('search Filterres', res);
+        if (res.applicantdata) {
+          this.classApply = true;
+        }
       }, (err) => {
         console.log('searchFilter err', err);
       });
@@ -520,5 +524,13 @@ export class MasterComponent implements OnInit {
     let month = new Date(weekEvent.start).getMonth();
     let date = new Date(weekEvent.start).getDate();
     this.eventData.date_selected = new Date(year, month, date);
+  }
+
+  onDateChange(e) {
+    console.log('eeeeeeeeeeee', e.target.value);
+    let year = new Date(e.target.value).getFullYear();
+    let month = new Date(e.target.value).getMonth();
+    let date = new Date(e.target.value).getDate();
+    this.viewDate = new Date(year, month, date);
   }
 }
