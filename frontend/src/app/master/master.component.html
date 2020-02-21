@@ -182,7 +182,7 @@
                       <div class="form-group col-md-6">
                         <label>Product Type</label>
                         <select name="product_type" [(ngModel)]="eventData.product_type" class="form-control">
-                          <option value="pro_flyer">Pro Flyer</option>
+                          <option value="proflyer">Pro Flyer</option>
                           <option value="first_timer">First Timer</option>
                         </select>
                       </div>
@@ -190,7 +190,7 @@
 
                     <div class="form-group">
                       <label>Duration</label>
-                      <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.product_duration">
+                      <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.totalTime">
                     </div>
                     <div class="form-row">
                       <div class="form-group col-md-6">
@@ -214,7 +214,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-primary" (click)="onSubmit()">Book</button>
+        <button type="button" class="btn btn-outline-primary" *ngIf="inEdit" (click)="onSubmit('Edit')">Edit</button>
+        <button type="button" class="btn btn-outline-primary" *ngIf="!inEdit" (click)="onSubmit('Book')">Book</button>
         <button type="button" class="btn btn-outline-danger" (click)="onCloseHandled()">Cancel</button>
       </div>
     </div>

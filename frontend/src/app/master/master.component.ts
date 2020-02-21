@@ -61,6 +61,8 @@ export class MasterComponent implements OnInit {
   dayBlockTime: any = [];
   searchData: any = {};
   classApply = false;
+  inEdit = false;
+
 
   constructor(private calendarService: CalendarService) {
     this.eventData.allDay = false;
@@ -107,6 +109,8 @@ export class MasterComponent implements OnInit {
             firstname: x.firstname,
             lastname: x.lastname,
             phonenumber: x.phonenumber,
+            unique_id: x.unique_id,
+            order_id: x.order_id,
             email: x.email,
             totalTime: Number(x.product_duration),
             draggable: true,
@@ -480,10 +484,11 @@ export class MasterComponent implements OnInit {
   OnDayClickedEvent(date, event) {
     console.log('OnDayClickedEvent');
     if (!(event.sourceEvent.toElement.className).includes('bg-pink')) {
-      this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+      this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
       this.display = 'block';
+      this.inEdit = false;
     } else {
-      alert('please select other day, this time is block')
+      alert('please select other day, this time is block');
     }
   }
 
@@ -491,12 +496,32 @@ export class MasterComponent implements OnInit {
     this.display = 'none';
   }
 
-  onSubmit() {
+  onSubmit(type) {
     this.eventData['booking_type'] = 'booking';
-    let json = {};
-    json['eventData'] = this.eventData;
-    json['userData'] = this.userData;
-    console.log('onSubmit', json);
+    this.eventData['product_duration'] = this.eventData.totalTime;
+    if (type === 'Book') {
+      const json = {};
+      json['eventData'] = this.eventData;
+      json['userData'] = this.userData;
+      console.log('onSubmit', json);
+      this.calendarService.createNewBooking(json)
+        .subscribe((res) => {
+        }, (err) => {
+
+        });
+    } else {
+      const json = {};
+      json['eventData'] = this.eventData;
+      json['userData'] = this.userData;
+      json['unique_id'] = this.eventData.unique_id;
+      console.log('onSubmit', json);
+      this.calendarService.updateBooking(json)
+        .subscribe((res) => {
+        }, (err) => {
+
+        });
+    }
+    this.getEventData();
     this.display = 'none';
     this.eventData = {};
     this.userData = {};
@@ -517,9 +542,10 @@ export class MasterComponent implements OnInit {
   onEventEdit(weekEvent) {
     console.log('event', weekEvent);
     this.display = 'block';
+    this.inEdit = true;
     this.eventData = weekEvent;
     this.userData = weekEvent;
-    this.eventData.time_slots = new Date(weekEvent.start).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
+    this.eventData.time_slots = new Date(weekEvent.start).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
     let year = new Date(weekEvent.start).getFullYear();
     let month = new Date(weekEvent.start).getMonth();
     let date = new Date(weekEvent.start).getDate();

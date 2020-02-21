@@ -2753,7 +2753,7 @@ exports.getBookingDetails = (req, res) => {
                     res.status(400).send(data)
                 })
             } else {
-                res.status(200).send({applicantdata: userData})
+                res.status(200).send(userData)
             }
         })
     } else {
@@ -2763,16 +2763,35 @@ exports.getBookingDetails = (req, res) => {
 };
 
 exports.generateBooking = (req, res) => {
-    // if(req.body.)
-    findWorkingHours(function (err, userData) {
-        if (err) {
-            errorResponse.queryError(err, function (data) {
-                res.status(400).send(data)
-            })
-        } else {
-            res.status(200).send({applicantdata: userData})
-        }
-    })
+    if (req.body.eventData && req.body.userData) {
+        bookingInsert(req.body, function (err, bookingData) {
+            if (err) {
+                errorResponse.queryError(err, function (data) {
+                    res.status(400).send(data)
+                })
+            } else {
+                res.status(200).send({error: false, message: "success", data: bookingData})
+            }
+        })
+    } else {
+        res.status(400).send({error: true, message: "body parameter are missing"})
+    }
+};
+
+exports.updateBooking = (req, res) => {
+    if (req.body.eventData && req.body.userData) {
+         updateBookingData(req.body, function (err, bookingData) {
+             if (err) {
+                 errorResponse.queryError(err, function (data) {
+                     res.status(400).send(data)
+                 })
+             } else {
+                 res.status(200).send({error: false, message: "success", data: bookingData})
+             }
+         })
+    } else {
+        res.status(400).send({error: true, message: "body parameter are missing"})
+    }
 };
 
 
@@ -2792,6 +2811,68 @@ const searchData = function (req, cb) {
     }
 };
 
+const bookingInsert = function (data, cb) {
+    const query = `INSERT INTO xyz_order_user_booking_details SET ?`;
+    const order_id = Math.floor(Math.random() * (9999999 - 999999)) + 999999;
+    let where = [];
+    let val = {
+        date_selected: data.eventData.date_selected,
+        booking_type: data.eventData.booking_type,
+        product_duration: data.eventData.product_duration,
+        product_type: data.eventData.product_type,
+        product_name: data.eventData.product_name,
+        time_slots: data.eventData.time_slots,
+        order_id: order_id,
+    }
+    where.push(val);
+    console.log('query', query);
+    console.log('val', val);
+    mysql(query, where, function (err1, result) {
+        const query1 = `INSERT INTO xyz_order_user_details SET ?`;
+        let where1 = [];
+        let val1 = {
+            order_id: order_id,
+            firstname: data.userData.firstname,
+            lastname: data.userData.lastname,
+            phonenumber: data.userData.phonenumber,
+            email: data.userData.email,
+        }
+        where1.push(val1);
+        if (err1)
+            cb(err1, null);
+        else {
+            mysql(query1, where1, function (err, result2) {
+                if (err)
+                    cb(err, null);
+                else
+                    cb(null, {booking_details: result, user_details: result2});
+            })
+        }
+    });
+}
+
+const updateBookingData = function (data, cb) {
+    const query = `UPDATE xyz_order_user_booking_details SET date_selected = ?, product_duration = ?, product_type = ?, product_name = ?, time_slots = ? where order_id = ? and unique_id = ?`;
+    console.log('query', query);
+    console.log('where', [data.eventData.date_selected, data.eventData.product_duration, data.eventData.product_type, data.eventData.product_name, data.eventData.time_slots, data.eventData.order_id, data.eventData.unique_id]);
+
+    mysql(query, [data.eventData.date_selected, data.eventData.product_duration, data.eventData.product_type, data.eventData.product_name, data.eventData.time_slots, data.eventData.order_id, data.eventData.order_id], function (err1, result) {
+        console.log('err1', err1);
+        console.log('result', result);
+        if (err1)
+            cb(err1, null);
+        else {
+            const query1 = `UPDATE xyz_order_user_details SET firstname = ?, lastname = ?, phonenumber = ?,email = ? where order_id = ?`;
+            mysql(query1, [data.userData.firstname, data.userData.lastname, data.userData.phonenumber, data.userData.email, data.eventData.order_id], function (err, result2) {
+                if (err)
+                    cb(err, null);
+                else
+                    cb(null, {booking_details: result, user_details: result2});
+            })
+        }
+    });
+}
+
 const findAllBlockDates = function (cb) {
     const query = `Select * from xyz_blocks_blocker_cutsom`;
     try {
@@ -2808,7 +2889,8 @@ const findAllBlockDates = function (cb) {
 };
 
 const findAllBookingData = function (cb) {
-    const query = `SELECT b.order_id,b.user_id, b.booking_type, b.date_selected, b.time_slots, b.quantity, b.product_id, b.product_type, b.product_name,b.product_name_pt, b.product_usages, b.product_duration,b.date_added,u.title, u.firstname, u.lastname, u.birthdate,u.country,u.dialing_code,u.phonenumber,u.email  FROM xyz_order_user_booking_details b JOIN xyz_order_user_details u where u.order_id = b.order_id;`;
+    const query = `SELECT b.unique_id, b.order_id,b.user_id, b.booking_type, b.date_selected, b.time_slots, b.quantity, b.product_id, b.product_type, b.product_name,b.product_name_pt, b.product_usages, b.product_duration,b.date_added,u.title, u.firstname, u.lastname, u.birthdate,u.country,u.dialing_code,u.phonenumber,u.email 
+    FROM xyz_order_user_booking_details b JOIN xyz_order_user_details u where u.order_id = b.order_id;`;
     try {
         mysql(query, [], function (err, userData) {
             if (err) {

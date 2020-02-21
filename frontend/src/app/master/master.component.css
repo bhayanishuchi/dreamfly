@@ -72,7 +72,7 @@ ul li.nav-item a.nav-link:focus
 }
 .event-active  {
   border-radius: 3px;
-  animation: highlight 10000ms ease-out;
+  animation: highlight 1000ms ease-out;
 }
 
 @keyframes highlight {

@@ -27,4 +27,11 @@ export class CalendarService {
   searchFilter(date, name) {
     return this.http.get<any>(this.api + '/getBookingDetails?search_date=' + date + '&name=' + name);
   }
+
+  createNewBooking(data) {
+    return this.http.post<any>(this.api + '/createNewBooking', data);
+  }
+  updateBooking(data) {
+    return this.http.post<any>(this.api + '/updateBooking', data);
+  }
 }
