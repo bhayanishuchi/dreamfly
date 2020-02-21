@@ -62,6 +62,7 @@ export class MasterComponent implements OnInit {
   searchData: any = {};
   classApply = false;
   inEdit = false;
+  manageStack = {};
 
 
   constructor(private calendarService: CalendarService) {
@@ -221,6 +222,7 @@ export class MasterComponent implements OnInit {
     renderEvent.hourColumns.forEach(hourColumn => {
       hourColumn.hours.forEach(hour => {
         hour.segments.forEach(segment => {
+          const abc = (this.events).filter(x => new Date(x.start).getTime() === new Date(segment.date).getTime());
 
           let str = '';
           const hr = new Date(segment.date).getHours();
@@ -235,7 +237,22 @@ export class MasterComponent implements OnInit {
           } else {
             str += ':' + min.toString();
           }
+          if (abc.length > 0) {
+            (abc).forEach((x) => {
+              if (this.manageStack[str] === undefined) {
+                this.manageStack[str] = {
+                  name: [x.title],
+                  totalTime: x.totalTime,
+                  leftTime: 30 - x.totalTime,
+                };
+              } else {
+                this.manageStack[str].name.push(x.title);
+                this.manageStack[str].totalTime += x.totalTime;
+                this.manageStack[str].leftTime -= x.totalTime;
+              }
+            });
 
+          }
           if (this.dayBlockTime.includes(str)) {
             segment.cssClass = 'bg-pink';
           }
@@ -245,6 +262,7 @@ export class MasterComponent implements OnInit {
         });
       });
     });
+    console.log('this.manageStack', this.manageStack);
   }
 
 
