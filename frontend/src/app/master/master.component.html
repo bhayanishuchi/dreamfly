@@ -136,30 +136,46 @@
           </li>
         </ul>
       </div>
+      <form #user="ngForm" (ngSubmit)="user.form.valid && onSubmit((inEdit)? 'Edit': 'Book')" novalidate>
       <div class="modal-body p-0">
         <div class="tab-content">
           <div role="tabpanel" class="tab-pane fade active show" id="user">
             <div class="container">
               <div class="card">
                 <div class="card-body">
-                  <form #user="ngForm">
                     <div class="form-group">
                       <label>First Name</label>
-                      <input type="text" class="form-control" name="firstname" required [(ngModel)]="userData.firstname">
+                      <input type="text" class="form-control" name="firstname" required [(ngModel)]="userData.firstname"
+                             #firstName="ngModel" [ngClass]="{ 'is-invalid': user.submitted && firstName.invalid }">
+                      <div *ngIf="user.submitted && firstName.invalid" class="invalid-feedback">
+                        <div *ngIf="firstName.errors.required">First Name is required</div>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label>Last Name</label>
-                      <input type="text" class="form-control" name="lastname" required [(ngModel)]="userData.lastname">
+                      <input type="text" class="form-control" name="lastname" required [(ngModel)]="userData.lastname"
+                             #lastName="ngModel" [ngClass]="{ 'is-invalid': user.submitted && lastName.invalid }">
+                      <div *ngIf="user.submitted && lastName.invalid" class="invalid-feedback">
+                        <div *ngIf="lastName.errors.required">Last Name is required</div>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label>Phone No.</label>
-                      <input type="number" class="form-control" name="phonenumber" required [(ngModel)]="userData.phonenumber">
+                      <input type="number" class="form-control" name="phonenumber" required [(ngModel)]="userData.phonenumber"
+                             #phonenumber="ngModel" [ngClass]="{ 'is-invalid': user.submitted && phonenumber.invalid }">
+                      <div *ngIf="user.submitted && phonenumber.invalid" class="invalid-feedback">
+                        <div *ngIf="phonenumber.errors.required">Phone Number is required</div>
+                      </div>
                     </div>
                     <div class="form-group">
                       <label>email</label>
-                      <input type="email" class="form-control" name="email" required [(ngModel)]="userData.email">
+                      <input type="text" class="form-control" name="email" required [(ngModel)]="userData.email" email
+                             #email="ngModel" [ngClass]="{ 'is-invalid': user.submitted && email.invalid }">
+                      <div *ngIf="user.submitted && email.invalid" class="invalid-feedback">
+                        <div *ngIf="email.errors.required">Email is required</div>
+                        <div *ngIf="email.errors.email">Email must be a valid email address</div>
+                      </div>
                     </div>
-                  </form>
                 </div>
               </div>
             </div>
@@ -168,44 +184,55 @@
             <div class="container">
               <div class="card">
                 <div class="card-body">
-                  <form #event="ngForm">
                     <div class="form-row">
                       <div class="form-group col-md-6">
                         <label>Product name</label>
-                        <select name="product_name" [(ngModel)]="eventData.product_name" class="form-control" required>
+                        <select name="product_name" [(ngModel)]="eventData.product_name" class="form-control"
+                                required #product_name="ngModel" [ngClass]="{ 'is-invalid': user.submitted && product_name.invalid }">
                           <option value="Friends Fly">Friends Fly</option>
                           <option value="Adults Fly">Adults Fly</option>
                           <option value="Kids Fly">Kids Fly</option>
                           <option value="Family Fly">Family Fly</option>
                         </select>
-
+                        <div *ngIf="user.submitted && product_name.invalid" class="invalid-feedback">
+                          <div *ngIf="product_name.errors.required">Product Name is required</div>
+                        </div>
                       </div>
                       <div class="form-group col-md-6">
                         <label>Product Type</label>
-                        <select name="product_type" [(ngModel)]="eventData.product_type" class="form-control" required>
+                        <select name="product_type" [(ngModel)]="eventData.product_type" class="form-control"
+                                required #product_type="ngModel" [ngClass]="{ 'is-invalid': user.submitted && product_type.invalid }">
                           <option value="proflyer">Pro Flyer</option>
                           <option value="first_timer">First Timer</option>
                         </select>
+                        <div *ngIf="user.submitted && product_type.invalid" class="invalid-feedback">
+                          <div *ngIf="product_type.errors.required">Product Type is required</div>
+                        </div>
                       </div>
                     </div>
-
                     <div class="form-row">
                       <div class="form-group col-md-6">
                         <label>Duration</label>
                         <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.totalTime"
-                               required>
+                               required #totalTime="ngModel" [ngClass]="{ 'is-invalid': user.submitted && totalTime.invalid }">
+                        <div *ngIf="user.submitted && totalTime.invalid" class="invalid-feedback">
+                          <div *ngIf="totalTime.errors.required">Duration is required</div>
+                        </div>
                       </div>
                       <div class="form-group col-md-6">
                         <label>Quantity</label>
                         <input type="number" class="form-control" name="quantity" [(ngModel)]="eventData.quantity"
-                               required>
+                               [disabled]="inEdit" required #quantity="ngModel" [ngClass]="{ 'is-invalid': user.submitted && quantity.invalid }">
+                        <div *ngIf="user.submitted && quantity.invalid" class="invalid-feedback">
+                          <div *ngIf="quantity.errors.required">Quantity is required</div>
+                        </div>
                       </div>
 
                     </div>
                     <div class="form-row">
                       <div class="form-group col-md-6">
                         <label>Booking date </label>
-                        <dx-date-box [disabled]="!inEdit"
+                        <dx-date-box [disabled]="true"
                                      [(min)]="startValue"
                                      [(value)]="eventData.date_selected">
                         </dx-date-box>
@@ -216,8 +243,6 @@
                                [(ngModel)]="eventData.time_slots">
                       </div>
                     </div>
-
-                  </form>
                 </div>
               </div>
             </div>
@@ -225,10 +250,11 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-primary" *ngIf="inEdit" [disabled]="user.form.invalid && event.form.invalid" (click)="onSubmit('Edit')">Edit</button>
-        <button type="button" class="btn btn-outline-primary" *ngIf="!inEdit" [disabled]="user.form.invalid && event.form.invalid" (click)="onSubmit('Book')">Book</button>
+        <button class="btn btn-outline-primary" *ngIf="inEdit">Edit</button>
+        <button class="btn btn-outline-primary" *ngIf="!inEdit">Book</button>
         <button type="button" class="btn btn-outline-danger" (click)="onCloseHandled()">Cancel</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
