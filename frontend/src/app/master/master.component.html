@@ -57,11 +57,11 @@
       <hr>
 
       <ng-template #dayEventTemplate let-weekEvent="weekEvent">
-        <div [title]="getTitle(weekEvent.event)" (click)="onEventEdit(weekEvent.event)" id="event"
+        <div [title]="getTitle(weekEvent.event)"  id="event"
              [class.event-active]="classApply==true && searchEvent === weekEvent.event.title"
              style="border: 1px solid"
              [ngStyle]="{'background-color': weekEvent.event.color.secondary,  'border-color': weekEvent.event.color.primary}">
-          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span class="cut-text"
+          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span (click)="onEventEdit(weekEvent.event)" class="cut-text"
           style="color: #1e90ff; font-size: 12px"> {{weekEvent.event.title}}</span>
         </div>
       </ng-template>
@@ -114,9 +114,10 @@
           (eventTimesChanged)="eventDropped($event, 'day')"
           [snapDraggedEvents]="false"
           (beforeViewRender)="beforeDayViewRender($event)"
-          [hourSegmentHeight]="60"
+
           [refresh]="refresh">
         </mwl-calendar-day-view>
+<!--        [hourSegmentHeight]="60"-->
       </div>
     </div>
   </div>
@@ -128,11 +129,14 @@
     <div class="modal-content">
       <div class="modal-header">
         <ul class="nav nav-tabs" role="tablist">
-          <li class="nav-item">
+          <li class="nav-item" style="width: 33%;">
             <a class="nav-link active" href="#user" role="tab" data-toggle="tab">User</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" style="width: 33%;">
             <a class="nav-link" href="#booking" role="tab" data-toggle="tab">Booking Detail</a>
+          </li>
+          <li class="nav-item" style="width: 33%;"*ngIf="inEdit">
+            <a class="nav-link" href="#subProduct" role="tab" data-toggle="tab">Sub Product</a>
           </li>
         </ul>
       </div>
@@ -200,7 +204,7 @@
                       </div>
                       <div class="form-group col-md-6">
                         <label>Product Type</label>
-                        <select name="product_type" [(ngModel)]="eventData.product_type" class="form-control"
+                        <select name="product_type" [(ngModel)]="eventData.product_type" class="form-control" [disabled]="inEdit"
                                 required #product_type="ngModel" [ngClass]="{ 'is-invalid': user.submitted && product_type.invalid }">
                           <option value="proflyer">Pro Flyer</option>
                           <option value="first_timer">First Timer</option>
@@ -213,7 +217,7 @@
                     <div class="form-row">
                       <div class="form-group col-md-6">
                         <label>Duration</label>
-                        <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.totalTime"
+                        <input type="number" class="form-control" name="duration" [(ngModel)]="eventData.totalTime" [disabled]="inEdit"
                                required #totalTime="ngModel" [ngClass]="{ 'is-invalid': user.submitted && totalTime.invalid }">
                         <div *ngIf="user.submitted && totalTime.invalid" class="invalid-feedback">
                           <div *ngIf="totalTime.errors.required">Duration is required</div>
@@ -243,6 +247,103 @@
                                [(ngModel)]="eventData.time_slots">
                       </div>
                     </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane fade" id="subProduct" *ngIf="inEdit">
+            <div class="container">
+              <div class="card">
+                <div class="card-body">
+                  <form #event="ngForm">
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label>Product name</label>
+                        <select id="sub_product_name" class="form-control" [(ngModel)]="subData.sub_product_name" name="sub_product_name" (change)="onProductChange()">
+                          <option *ngFor="let product of productlist" value="{{product.name}}">{{product.name}}
+                            <input class="form-control" type="hidden" id="newunique_id" [value]="'product.unique_id'" [(ngModel)]="subData.unique_id" name="newunique_id" />
+                          </option>
+                        </select>
+
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label>Product Name PT</label>
+                        <input class="form-control" type="text" id="sub_product_name_pt" disabled [(ngModel)]="subData.sub_product_name_pt" name="sub_product_name_pt" />
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label>Product Type</label>
+                        <input class="form-control" type="text" id="newsub_product_type" disabled [(ngModel)]="subData.sub_product_type" name="newsub_product_type" />
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label>Quantity</label>
+                        <input class="form-control" type="text" id="newQuantity" required [(ngModel)]="subData.quantity" name="newQuantity" />
+                      </div>
+
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label>Price </label>
+                        <input class="form-control" type="text" id="newprice" disabled [(ngModel)]="subData.sub_product_price" name="newprice" />
+                      </div>
+                    </div>
+
+                  </form>
+                 <!-- <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                      <th>Product Name</th>
+                      <th>Product Name PT</th>
+                      <th>Product Type</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let field of fieldArray; let i = index">
+                      &lt;!&ndash;<td>
+                        <input [(ngModel)]="field.code" class="form-control" type="text" [name]="'field.code'" [id]="'field[i].code'" />
+                      </td>
+                      <td>
+                        <input [(ngModel)]="field.name" class="form-control" type="text" [name]="'field.name'" [id]="'field[i].name'"/>
+                      </td>
+                      <td>
+                        <input [(ngModel)]="field.price" class="form-control" type="text" [name]="'field.price'" [id]="'field[i].price'"/>
+                      </td>
+                      <td>
+                        <button class="btn btn-default"  type="button" (click)="deleteFieldValue(i)">Delete</button>
+                      </td>
+                    </tr>&ndash;&gt;
+&lt;!&ndash;                    <tr>&ndash;&gt;
+                      <td>
+                        <select id="newproduct_{{field.id}}" class="form-control" [(ngModel)]="field.sub_product_name" name="newproduct_{{field.id}}" (change)="onProductChange()">
+                          <option *ngFor="let product of productlist" value="{{product.name}}">{{product.name}}
+                          <input class="form-control" type="hidden" id="newunique_id_{{field.id}}" [value]="'product.unique_id'" [(ngModel)]="field.unique_id" name="newunique_id_{{field.id}}" />
+                          </option>
+                        </select>
+
+                      </td>
+                      <td>
+                        <input class="form-control" type="text" id="newname_pt_{{field.id}}" disabled [(ngModel)]="field.sub_product_name_pt" name="newname_pt_{{field.id}}" />
+                      </td>
+                      <td>
+                        <input class="form-control" type="text" id="newsub_product_type_{{field.id}}" disabled [(ngModel)]="field.sub_product_type" name="newsub_product_type_{{field.id}}" />
+                      </td>
+                      <td>
+                        <input class="form-control" type="text" id="newQuantity_{{field.id}}" required [(ngModel)]="field.quantity" name="newQuantity_{{field.id}}" />
+                      </td>
+                      <td>
+                        <input class="form-control" type="text" id="newprice_{{field.id}}" disabled [(ngModel)]="field.sub_product_price" name="newprice_{{field.id}}" />
+                      </td>
+                      <td>
+                        <button class="btn btn-default" type="button" (click)="addFieldValue()" [disabled]="(field.quantity !== '' || field.quantity !== undefined) && (field.sub_product_name !== '' || field.sub_product_name !== undefined)">Add</button>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>-->
                 </div>
               </div>
             </div>

@@ -43,7 +43,7 @@ export class MasterComponent implements OnInit {
       secondary: '#FDF1BA'
     }
   };
-  viewDate: Date = new Date(2020, 0, 31);
+  viewDate: Date = new Date();
   selectedEvent: any = [];
   selectedEvent2: any = [];
   events = [];
@@ -54,7 +54,7 @@ export class MasterComponent implements OnInit {
   activeDayIsOpen = false;
   weekBlockDates = [];
   display = 'none';
-  startValue: Date = new Date(2020, 0, 31);
+  startValue: Date = new Date();
   eventData: any = {};
   userData: any = {};
   dayStartHour: any = 0;
@@ -65,22 +65,41 @@ export class MasterComponent implements OnInit {
   inEdit = false;
   manageStack = {};
   searchEvent;
-
+  fieldArray: Array<any> = [];
+  subData: any = {};
+  productlist: any = [];
 
   constructor(private calendarService: CalendarService,
               private datePipe: DatePipe) {
     this.eventData.allDay = false;
     this.eventData.start = new Date();
     this.eventData.end = new Date();
+    this.fieldArray = [{
+      id: 1,
+      sub_product_name: '',
+      sub_product_type: '',
+      quantity: '',
+      sub_product_name_pt: '',
+      sub_product_price: '',
+      unique_id: '',
+    }];
   }
 
   ngOnInit() {
     console.log('hit oninit');
-
-
     this.getWorkingHours();
     this.getBlockDateForWeek();
     this.getEventData();
+    this.calendarService.productList()
+      .subscribe((res) => {
+        console.log('productList res', res);
+        if (res.applicantdata) {
+          this.productlist = res.applicantdata;
+        }
+      }, (err) => {
+        console.log('productList err', err);
+      });
+
     this.externalEvents = [{
       title: 'External Event 1',
       color: this.colors.yellow,
@@ -106,13 +125,14 @@ export class MasterComponent implements OnInit {
           date.setHours(str[0], str[1], str[2]);
           const json = {
             title: x.firstname + ' ' + x.lastname,
-            color: (x.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue,
+            color: (x.overflow === 'yes') ? this.colors.red : ((x.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue),
             start: date,
             product_type: x.product_type,
             product_name: x.product_name,
             firstname: x.firstname,
             lastname: x.lastname,
             phonenumber: x.phonenumber,
+            has_sub_products: x.has_sub_products,
             unique_id: x.unique_id,
             order_id: x.order_id,
             email: x.email,
@@ -248,13 +268,15 @@ export class MasterComponent implements OnInit {
               if (this.manageStack[str] === undefined) {
                 this.manageStack[str] = {
                   name: [x.title],
-                  totalTime: x.totalTime,
-                  leftTime: 30 - x.totalTime,
+                  playerTime: [x.totalTime],
+                  totalTime: (x.product_type === 'first_timer') ? (Number(x.totalTime) * 1.25) : x.totalTime,
+                  leftTime: 30 - ((x.product_type === 'first_timer') ? (Number(x.totalTime) * 1.25) : x.totalTime),
                 };
               } else {
                 this.manageStack[str].name.push(x.title);
-                this.manageStack[str].totalTime += x.totalTime;
-                this.manageStack[str].leftTime -= x.totalTime;
+                this.manageStack[str].playerTime.push(x.totalTime);
+                this.manageStack[str].totalTime += (x.product_type === 'first_timer') ? (Number(x.totalTime) * 1.25) : x.totalTime;
+                this.manageStack[str].leftTime -= (x.product_type === 'first_timer') ? (Number(x.totalTime) * 1.25) : x.totalTime;
               }
             });
           }
@@ -343,7 +365,7 @@ export class MasterComponent implements OnInit {
                      newStart,
                      newEnd
                    }: CalendarEventTimesChangedEvent): void {
-    alert('hit');
+    console.log('hit');
     event.start = newStart;
     event.end = newEnd;
     this.refresh.next();
@@ -386,7 +408,9 @@ export class MasterComponent implements OnInit {
     }
     console.log('str', str);
     if (Object.keys(this.manageStack).includes(str)) {
-      const time = Number(that.manageStack[str].leftTime) - Number(event.totalTime);
+      const t1 = (event.product_type === 'first_timer') ? (Number(event.totalTime) * 1.25) : event.totalTime;
+      const time = Number(that.manageStack[str].leftTime) - Number(t1);
+      console.log('time', time);
       if (time > 0) {
         event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
         that.events = [...that.events];
@@ -401,9 +425,6 @@ export class MasterComponent implements OnInit {
       this.events = [...this.events];
     }
 
-
-    console.log('event', event);
-    console.log('this.events', this.events);
     // this.events = [...this.events];
 
 
@@ -490,7 +511,7 @@ export class MasterComponent implements OnInit {
   }
 
   externalDrop(event: CalendarEvent) {
-    alert('externalDrop' + event);
+    console.log('externalDrop' + event);
     let flag = false;
     (this.selectedEvent2).forEach((p) => {
       if (p.title === event.title) {
@@ -566,9 +587,9 @@ export class MasterComponent implements OnInit {
     console.log('time', timeStr);
 
     if (Object.keys(this.manageStack).includes(timeStr)) {
-
+      return true;
     } else {
-
+      return false;
     }
   }
 
@@ -593,11 +614,20 @@ export class MasterComponent implements OnInit {
   onSubmit(type) {
     this.eventData['booking_type'] = 'booking';
     this.eventData['product_duration'] = this.eventData.totalTime;
+    let flag = false;
+    if (this.checkOverFlow(this.eventData.date_selected)) {
+      flag = true;
+    } else {
+      flag = false;
+    }
     this.eventData['date_selected'] = this.datePipe.transform(this.eventData.date_selected, 'yyyy-MM-dd');
+    const json = {};
+    json['eventData'] = this.eventData;
+    json['userData'] = this.userData;
+
     if (type === 'Book') {
-      const json = {};
-      json['eventData'] = this.eventData;
-      json['userData'] = this.userData;
+      this.eventData.overflow = flag;
+
       this.calendarService.createNewBooking(json)
         .subscribe((res) => {
           this.getEventData();
@@ -610,12 +640,24 @@ export class MasterComponent implements OnInit {
           this.refresh.next();
         });
     } else {
-      const json = {};
-      json['eventData'] = this.eventData;
-      json['userData'] = this.userData;
       json['unique_id'] = this.eventData.unique_id;
       this.calendarService.updateBooking(json)
         .subscribe((res) => {
+          let data = {};
+          data = this.subData;
+          data['quantity'] = this.subData.quantity;
+          data['sub_product_id'] = this.subData.unique_id;
+          console.log('subData', data);
+          this.calendarService.addSubProduct({
+            order_id: this.eventData.order_id,
+            unique_id: this.eventData.unique_id,
+            subData: data
+          }).subscribe((response) => {
+              console.log('addSubProduct', response);
+              this.subData = {};
+            }, error => {
+              console.log('addSubProduct err', error);
+            });
           this.getEventData();
           this.display = 'none';
           this.eventData = {};
@@ -640,11 +682,21 @@ export class MasterComponent implements OnInit {
   }
 
   onEventEdit(weekEvent) {
-    console.log('onEventEdit');
+    console.log('onEventEdit', weekEvent);
+    if (weekEvent.has_sub_products === 'yes') {
+      this.calendarService.subProductDetails(weekEvent.unique_id, weekEvent.order_id)
+        .subscribe((res) => {
+          console.log('subProductDetails', res);
+          this.subData = res[0];
+        }, error => {
+          console.log('subProductDetails error', error);
+        });
+    }
     this.display = 'block';
     this.inEdit = true;
     this.eventData = weekEvent;
     this.userData = weekEvent;
+
     this.eventData.time_slots = new Date(weekEvent.start).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
     const year = new Date(weekEvent.start).getFullYear();
     const month = new Date(weekEvent.start).getMonth();
@@ -658,5 +710,44 @@ export class MasterComponent implements OnInit {
     const month = new Date(e.target.value).getMonth();
     const date = new Date(e.target.value).getDate();
     this.viewDate = new Date(year, month, date);
+  }
+
+  addFieldValue() {
+    const json = {
+      id: this.fieldArray.length + 1
+    };
+    console.log('this.fieldArray', this.fieldArray);
+    let data = this.fieldArray[this.fieldArray.length - 1];
+    let subData = {
+      quantity: data.quantity,
+      sub_product_id: data.unique_id,
+      sub_product_name: data.sub_product_name,
+      sub_product_name_pt: data.sub_product_name_pt,
+      sub_product_type: data.sub_product_type,
+      sub_product_price: data.sub_product_price,
+    };
+    console.log('subData', subData);
+    /*this.calendarService.addSubProduct({order_id: this.eventData.order_id, unique_id: this.eventData.unique_id, subData:subData})
+      .subscribe((res) => {
+        console.log('addSubProduct', res);
+      }, error => {
+        console.log('addSubProduct err', error);
+      });*/
+    this.fieldArray.push(Object.assign({}, json));
+  }
+
+  deleteFieldValue(index) {
+    this.fieldArray.splice(index, 1);
+  }
+
+  onProductChange() {
+    this.productlist.filter((y) => {
+      if (this.subData.sub_product_name === y.name) {
+        this.subData['sub_product_name_pt'] = y['name_pt'];
+        this.subData['unique_id'] = y['unique_id'];
+        this.subData['sub_product_type'] = y['sub_product_type'];
+        this.subData['sub_product_price'] = y['price'];
+      }
+    });
   }
 }

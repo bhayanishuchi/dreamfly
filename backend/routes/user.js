@@ -5,11 +5,14 @@ const {isReviewer, isUser, isAdmin} = require('../controllers/aws/aws_cognito');
 
 /* GET users listing. */
 router.get('/getBlockDate', userController.getBlockDate);
+router.get('/getlistofproduct', userController.getlistofproduct);
 router.get('/getBookingData', userController.getBookingData);
 router.get('/getWorkingHours', userController.getWorkingHours);
 router.get('/getBookingDetails', userController.getBookingDetails);
+router.get('/getSubProductDetails', userController.getSubProductDetails);
 router.post('/createNewBooking', userController.generateBooking);
 router.post('/updateBooking', userController.updateBooking);
+router.post('/addUserSubProduct', userController.addUserSubProduct);
 
 router.post('/', userController.createuser);    // create user or sign up : {email, password, userName}
 router.post('/autosave', isUser(), userController.autosave);    // Auto Save API

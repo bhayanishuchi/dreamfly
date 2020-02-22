@@ -34,4 +34,14 @@ export class CalendarService {
   updateBooking(data) {
     return this.http.post<any>(this.api + '/updateBooking', data);
   }
+
+  subProductDetails(unique_id, order_id) {
+    return this.http.get<any>(this.api + '/getSubProductDetails?unique_id=' + unique_id + '&order_id=' + order_id);
+  }
+  productList() {
+    return this.http.get<any>(this.api + '/getlistofproduct');
+  }
+  addSubProduct(data) {
+    return this.http.post<any>(this.api + '/addUserSubProduct', data);
+  }
 }

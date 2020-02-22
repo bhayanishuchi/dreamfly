@@ -2720,6 +2720,17 @@ exports.getBlockDate = (req, res) => {
         }
     })
 };
+exports.getlistofproduct = (req, res) => {
+    findAllProduct(function (err, userData) {
+        if (err) {
+            errorResponse.queryError(err, function (data) {
+                res.status(400).send(data)
+            })
+        } else {
+            res.status(200).send({applicantdata: userData})
+        }
+    })
+};
 
 exports.getBookingData = (req, res) => {
     findAllBookingData(function (err, userData) {
@@ -2759,7 +2770,22 @@ exports.getBookingDetails = (req, res) => {
     } else {
         res.status(400).send({error: true, message: 'Body parameter search_date or name missing'})
     }
+};
 
+exports.getSubProductDetails = (req, res) => {
+    if (req.query.unique_id && req.query.order_id) {
+        searchSubProduct(req, function (err, userData) {
+            if (err) {
+                errorResponse.queryError(err, function (data) {
+                    res.status(400).send(data)
+                })
+            } else {
+                res.status(200).send(userData)
+            }
+        })
+    } else {
+        res.status(400).send({error: true, message: 'Body parameter unique_id or order_id missing'})
+    }
 };
 
 exports.generateBooking = (req, res) => {
@@ -2781,6 +2807,22 @@ exports.generateBooking = (req, res) => {
 exports.updateBooking = (req, res) => {
     if (req.body.eventData && req.body.userData) {
         updateBookingData(req.body, function (err, bookingData) {
+            if (err) {
+                errorResponse.queryError(err, function (data) {
+                    res.status(400).send(data)
+                })
+            } else {
+                res.status(200).send({error: false, message: "success", data: bookingData})
+            }
+        })
+    } else {
+        res.status(400).send({error: true, message: "body parameter are missing"})
+    }
+};
+
+exports.addUserSubProduct = (req, res) => {
+    if (req.body.unique_id && req.body.order_id && req.body.subData) {
+        addSubData(req.body, function (err, bookingData) {
             if (err) {
                 errorResponse.queryError(err, function (data) {
                     res.status(400).send(data)
@@ -2821,9 +2863,12 @@ const bookingInsert = function (data, cb) {
         product_duration: data.eventData.product_duration,
         product_type: data.eventData.product_type,
         product_name: data.eventData.product_name,
-        quantity : data.eventData.quantity,
+        quantity: data.eventData.quantity,
         time_slots: data.eventData.time_slots,
         order_id: order_id,
+    }
+    if (data.eventData.overflow) {
+        val['overflow'] = data.eventData.overflow;
     }
     where.push(val);
     mysql(query, where, function (err1, result) {
@@ -2848,7 +2893,38 @@ const bookingInsert = function (data, cb) {
             })
         }
     });
-}
+};
+
+const addSubData = function (data, cb) {
+    const query = `UPDATE xyz_order_user_booking_details SET has_sub_products = 'yes' where order_id = '` + data.order_id + `' and unique_id = ` + data.unique_id + `; `;
+    console.log('query',query);
+    mysql(query, [], function (err1, result) {
+        console.log('err1, result', err1, result);
+        if (err1)
+            cb(err1, null);
+        else {
+            const query1 = `INSERT INTO xyz_order_sub_products_details SET ?`;
+            let where = [];
+            let val = {
+                order_id: data.order_id,
+                quantity: data.subData.quantity,
+                sub_product_id: data.subData.sub_product_id,
+                sub_product_name: data.subData.sub_product_name,
+                sub_product_name_pt: data.subData.sub_product_name_pt,
+                sub_product_type: data.subData.sub_product_type,
+                sub_product_price: data.subData.sub_product_price,
+            };
+            where.push(val);
+            mysql(query1, where, function (err1, result) {
+                if (err1)
+                    cb(err1, null);
+                else {
+                    cb(null, result);
+                }
+            })
+        }
+    });
+};
 
 const updateBookingData = function (data, cb) {
     const query = `UPDATE xyz_order_user_booking_details SET quantity = '` + data.eventData.quantity + `', date_selected = '` + data.eventData.date_selected + `', product_duration = ` + data.eventData.product_duration + `, product_type = '` + data.eventData.product_type + `', product_name = '` + data.eventData.product_name + `', time_slots = '` + data.eventData.time_slots + `' where order_id = '` + data.eventData.order_id + `' and unique_id = ` + data.eventData.unique_id + `;`;
@@ -2868,7 +2944,7 @@ const updateBookingData = function (data, cb) {
             })
         }
     });
-}
+};
 
 const findAllBlockDates = function (cb) {
     const query = `Select * from xyz_blocks_blocker_cutsom`;
@@ -2885,11 +2961,41 @@ const findAllBlockDates = function (cb) {
     }
 };
 
+const findAllProduct = function (cb) {
+    const query = `Select * from xyz_sub_products`;
+    try {
+        mysql(query, [], function (err, userData) {
+            if (err) {
+                cb(err, null)
+            } else {
+                cb(null, userData)
+            }
+        });
+    } catch (e) {
+        cb(e, null);
+    }
+};
+
 const findAllBookingData = function (cb) {
-    const query = `SELECT b.unique_id, b.order_id,b.user_id, b.booking_type, b.date_selected, b.time_slots, b.quantity, b.product_id, b.product_type, b.product_name,b.product_name_pt, b.product_usages, b.product_duration,b.date_added,u.title, u.firstname, u.lastname, u.birthdate,u.country,u.dialing_code,u.phonenumber,u.email 
+    const query = `SELECT b.has_sub_products, b.overflow, b.unique_id, b.order_id,b.user_id, b.booking_type, b.date_selected, b.time_slots, b.quantity, b.product_id, b.product_type, b.product_name,b.product_name_pt, b.product_usages, b.product_duration,b.date_added,u.title, u.firstname, u.lastname, u.birthdate,u.country,u.dialing_code,u.phonenumber,u.email 
     FROM xyz_order_user_booking_details b JOIN xyz_order_user_details u where u.order_id = b.order_id;`;
     try {
         mysql(query, [], function (err, userData) {
+            if (err) {
+                cb(err, null)
+            } else {
+                cb(null, userData)
+            }
+        });
+    } catch (e) {
+        cb(e, null);
+    }
+};
+
+const searchSubProduct = function (req,cb) {
+    const query = `SELECT * FROM xyz_order_sub_products_details os where os.order_id = ?`;
+    try {
+        mysql(query, [req.query.order_id], function (err, userData) {
             if (err) {
                 cb(err, null)
             } else {
