@@ -7,7 +7,7 @@ import {AppRoutingModule} from "./app-routing.module";
 import {HeaderComponent} from "./header/header.component";
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import {FormsModule} from "@angular/forms";
-import {CommonModule} from "@angular/common";
+import {CommonModule, DatePipe} from '@angular/common';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 // import {CalendarDatePipe} from "./calendarDate.pipe";
 
@@ -38,7 +38,7 @@ import {CalendarService} from './service/calendar.service';
       useFactory: adapterFactory
     }),
   ],
-  providers: [CalendarService],
+  providers: [CalendarService, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -8,6 +8,7 @@ import {Subject} from 'rxjs';
 import {CustomDateFormatter} from '../lib/custom-date-formatter.provider';
 import {CustomEventTitleFormatter} from '../lib/tooltip';
 import {CalendarService} from '../service/calendar.service';
+import {DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-master',
@@ -65,10 +66,12 @@ export class MasterComponent implements OnInit {
   manageStack = {};
 
 
-  constructor(private calendarService: CalendarService) {
+  constructor(private calendarService: CalendarService,
+              private datePipe: DatePipe) {
     this.eventData.allDay = false;
     this.eventData.start = new Date();
     this.eventData.end = new Date();
+    this.eventData.date_selected = new Date();
   }
 
   ngOnInit() {
@@ -113,6 +116,7 @@ export class MasterComponent implements OnInit {
             unique_id: x.unique_id,
             order_id: x.order_id,
             email: x.email,
+            quantity: x.quantity,
             totalTime: Number(x.product_duration),
             draggable: true,
             resizable: {
@@ -517,6 +521,7 @@ export class MasterComponent implements OnInit {
   onSubmit(type) {
     this.eventData['booking_type'] = 'booking';
     this.eventData['product_duration'] = this.eventData.totalTime;
+    this.eventData['date_selected'] = this.datePipe.transform(this.eventData.date_selected, 'yyyy-MM-dd');
     if (type === 'Book') {
       const json = {};
       json['eventData'] = this.eventData;
@@ -524,6 +529,7 @@ export class MasterComponent implements OnInit {
       console.log('onSubmit', json);
       this.calendarService.createNewBooking(json)
         .subscribe((res) => {
+this.getEventData();
         }, (err) => {
 
         });
