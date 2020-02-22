@@ -2780,15 +2780,15 @@ exports.generateBooking = (req, res) => {
 
 exports.updateBooking = (req, res) => {
     if (req.body.eventData && req.body.userData) {
-         updateBookingData(req.body, function (err, bookingData) {
-             if (err) {
-                 errorResponse.queryError(err, function (data) {
-                     res.status(400).send(data)
-                 })
-             } else {
-                 res.status(200).send({error: false, message: "success", data: bookingData})
-             }
-         })
+        updateBookingData(req.body, function (err, bookingData) {
+            if (err) {
+                errorResponse.queryError(err, function (data) {
+                    res.status(400).send(data)
+                })
+            } else {
+                res.status(200).send({error: false, message: "success", data: bookingData})
+            }
+        })
     } else {
         res.status(400).send({error: true, message: "body parameter are missing"})
     }
@@ -2821,12 +2821,11 @@ const bookingInsert = function (data, cb) {
         product_duration: data.eventData.product_duration,
         product_type: data.eventData.product_type,
         product_name: data.eventData.product_name,
+        quantity : data.eventData.quantity,
         time_slots: data.eventData.time_slots,
         order_id: order_id,
     }
     where.push(val);
-    console.log('query', query);
-    console.log('val', val);
     mysql(query, where, function (err1, result) {
         const query1 = `INSERT INTO xyz_order_user_details SET ?`;
         let where1 = [];
@@ -2852,13 +2851,11 @@ const bookingInsert = function (data, cb) {
 }
 
 const updateBookingData = function (data, cb) {
-    const query = `UPDATE xyz_order_user_booking_details SET date_selected = ?, product_duration = ?, product_type = ?, product_name = ?, time_slots = ? where order_id = ? and unique_id = ?`;
+    const query = `UPDATE xyz_order_user_booking_details SET quantity = '` + data.eventData.quantity + `', date_selected = '` + data.eventData.date_selected + `', product_duration = ` + data.eventData.product_duration + `, product_type = '` + data.eventData.product_type + `', product_name = '` + data.eventData.product_name + `', time_slots = '` + data.eventData.time_slots + `' where order_id = '` + data.eventData.order_id + `' and unique_id = ` + data.eventData.unique_id + `;`;
     console.log('query', query);
-    console.log('where', [data.eventData.date_selected, data.eventData.product_duration, data.eventData.product_type, data.eventData.product_name, data.eventData.time_slots, data.eventData.order_id, data.eventData.unique_id]);
 
-    mysql(query, [data.eventData.date_selected, data.eventData.product_duration, data.eventData.product_type, data.eventData.product_name, data.eventData.time_slots, data.eventData.order_id, data.eventData.order_id], function (err1, result) {
-        console.log('err1', err1);
-        console.log('result', result);
+    mysql(query, [], function (err1, result) {
+        console.log('err1, result', err1, result);
         if (err1)
             cb(err1, null);
         else {

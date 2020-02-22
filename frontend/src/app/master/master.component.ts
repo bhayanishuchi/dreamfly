@@ -64,6 +64,7 @@ export class MasterComponent implements OnInit {
   classApply = false;
   inEdit = false;
   manageStack = {};
+  searchEvent;
 
 
   constructor(private calendarService: CalendarService,
@@ -71,11 +72,10 @@ export class MasterComponent implements OnInit {
     this.eventData.allDay = false;
     this.eventData.start = new Date();
     this.eventData.end = new Date();
-    this.eventData.date_selected = new Date();
   }
 
   ngOnInit() {
-    console.log('hit oninit', this.clickedDate);
+    console.log('hit oninit');
 
 
     this.getWorkingHours();
@@ -187,8 +187,8 @@ export class MasterComponent implements OnInit {
               that.checkBlockDate(segment.date, that.weekBlockDates, function (data) {
                 if (data.length > 0) {
                   let str = '';
-                  let hr = new Date(segment.date).getHours();
-                  let min = new Date(segment.date).getMinutes();
+                  const hr = new Date(segment.date).getHours();
+                  const min = new Date(segment.date).getMinutes();
                   if ((hr).toString().length === 1) {
                     str = '0' + hr.toString();
                   } else {
@@ -200,7 +200,7 @@ export class MasterComponent implements OnInit {
                     str += ':' + min.toString();
                   }
 
-                  let checkAry = (data[1].blocks_json);
+                  const checkAry = (data[1].blocks_json);
                   if (checkAry.includes(str)) {
                     segment.cssClass = 'bg-pink';
                   } else {
@@ -222,11 +222,13 @@ export class MasterComponent implements OnInit {
 
   beforeDayViewRender(renderEvent: CalendarDayViewBeforeRenderEvent) {
     this.getWorkingHours();
+    this.manageStack = {};
     // this.getEventData();
     renderEvent.hourColumns.forEach(hourColumn => {
       hourColumn.hours.forEach(hour => {
         hour.segments.forEach(segment => {
-          const abc = (this.events).filter(x => new Date(x.start).getTime() === new Date(segment.date).getTime());
+
+          const registerEvent = (this.events).filter(x => new Date(x.start).getTime() === new Date(segment.date).getTime());
 
           let str = '';
           const hr = new Date(segment.date).getHours();
@@ -241,8 +243,8 @@ export class MasterComponent implements OnInit {
           } else {
             str += ':' + min.toString();
           }
-          if (abc.length > 0) {
-            (abc).forEach((x) => {
+          if (registerEvent.length > 0) {
+            (registerEvent).forEach((x) => {
               if (this.manageStack[str] === undefined) {
                 this.manageStack[str] = {
                   name: [x.title],
@@ -255,7 +257,6 @@ export class MasterComponent implements OnInit {
                 this.manageStack[str].leftTime -= x.totalTime;
               }
             });
-
           }
           if (this.dayBlockTime.includes(str)) {
             segment.cssClass = 'bg-pink';
@@ -274,8 +275,9 @@ export class MasterComponent implements OnInit {
     this.calendarService.searchFilter(this.searchData.date, this.searchData.text)
       .subscribe((res) => {
         console.log('search Filterres', res);
-        if (res.applicantdata) {
+        if (res) {
           this.classApply = true;
+          this.searchEvent = res[0].firstname + ' ' + res[0].lastname;
         }
       }, (err) => {
         console.log('searchFilter err', err);
@@ -348,14 +350,18 @@ export class MasterComponent implements OnInit {
   }
 
   updateEvent(event, newStart, newEnd, allDay) {
+    const that = this;
     const externalIndex = this.externalEvents.indexOf(event);
+    // set all day
     if (typeof allDay !== 'undefined') {
       event.allDay = allDay;
     }
+    // remove from external and push into events
     if (externalIndex > -1) {
       this.externalEvents.splice(externalIndex, 1);
       this.events.push(event);
     }
+
     event.start = newStart;
     if (newEnd) {
       event.end = newEnd;
@@ -364,7 +370,41 @@ export class MasterComponent implements OnInit {
       this.viewDate = newStart;
       this.activeDayIsOpen = true;
     }
-    this.events = [...this.events];
+
+    let str = '';
+    const hr = new Date(newStart).getHours();
+    const min = new Date(newStart).getMinutes();
+    if ((hr).toString().length === 1) {
+      str = '0' + hr.toString();
+    } else {
+      str = hr.toString();
+    }
+    if ((min).toString().length === 1) {
+      str += ':' + '0' + min.toString();
+    } else {
+      str += ':' + min.toString();
+    }
+    console.log('str', str);
+    if (Object.keys(this.manageStack).includes(str)) {
+      const time = Number(that.manageStack[str].leftTime) - Number(event.totalTime);
+      if (time > 0) {
+        event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
+        that.events = [...that.events];
+      } else {
+        console.log('overTime');
+        event.color = that.colors.red;
+        that.events = [...that.events];
+      }
+    } else {
+      event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
+      console.log('false');
+      this.events = [...this.events];
+    }
+
+
+    console.log('event', event);
+    console.log('this.events', this.events);
+    // this.events = [...this.events];
 
 
     let flag = false;
@@ -407,8 +447,8 @@ export class MasterComponent implements OnInit {
           that.updateEvent(event, newStart, newEnd, allDay);
         } else {
           let str = '';
-          let hr = new Date(newStart).getHours();
-          let min = new Date(newStart).getMinutes();
+          const hr = new Date(newStart).getHours();
+          const min = new Date(newStart).getMinutes();
           if ((hr).toString().length === 1) {
             str = '0' + hr.toString();
           } else {
@@ -420,8 +460,7 @@ export class MasterComponent implements OnInit {
             str += ':' + min.toString();
           }
 
-          let checkAry = (data[1].blocks_json);
-          console.log('data', checkAry.length);
+          const checkAry = (data[1].blocks_json);
           if (checkAry.includes(str)) {
             alert('all Day Block');
           } else {
@@ -433,6 +472,7 @@ export class MasterComponent implements OnInit {
       this.checkBlockTime(newStart, this.dayBlockTime, function (data) {
         if (data) {
           alert('Time Block');
+          that.refresh.next();
         } else {
           that.updateEvent(event, newStart, newEnd, allDay);
         }
@@ -490,7 +530,7 @@ export class MasterComponent implements OnInit {
   }
 
   removeByAttr = function (arr, attr, value) {
-    var i = arr.length;
+    let i = arr.length;
     while (i--) {
       if (arr[i]
         && arr[i].hasOwnProperty(attr)
@@ -503,9 +543,41 @@ export class MasterComponent implements OnInit {
     return arr;
   };
 
+  returnTime(date) {
+    let str = '';
+    const hr = new Date(date).getHours();
+    const min = new Date(date).getMinutes();
+    if ((hr).toString().length === 1) {
+      str = '0' + hr.toString();
+    } else {
+      str = hr.toString();
+    }
+    if ((min).toString().length === 1) {
+      str += ':' + '0' + min.toString();
+    } else {
+      str += ':' + min.toString();
+    }
+    return str;
+  }
+
+  checkOverFlow(date) {
+    const that = this;
+    const timeStr = this.returnTime(date);
+    console.log('time', timeStr);
+
+    if (Object.keys(this.manageStack).includes(timeStr)) {
+
+    } else {
+
+    }
+  }
+
   OnDayClickedEvent(date, event) {
-    console.log('OnDayClickedEvent');
+    console.log('OnDayClickedEvent', date, event);
     if (!(event.sourceEvent.toElement.className).includes('bg-pink')) {
+      this.eventData = {};
+      this.userData = {};
+      this.eventData.date_selected = new Date(date);
       this.eventData.time_slots = new Date(date).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
       this.display = 'block';
       this.inEdit = false;
@@ -526,30 +598,34 @@ export class MasterComponent implements OnInit {
       const json = {};
       json['eventData'] = this.eventData;
       json['userData'] = this.userData;
-      console.log('onSubmit', json);
       this.calendarService.createNewBooking(json)
         .subscribe((res) => {
-this.getEventData();
+          this.getEventData();
+          this.display = 'none';
+          this.eventData = {};
+          this.userData = {};
+          this.refresh.next();
         }, (err) => {
-
+          this.display = 'none';
+          this.refresh.next();
         });
     } else {
       const json = {};
       json['eventData'] = this.eventData;
       json['userData'] = this.userData;
       json['unique_id'] = this.eventData.unique_id;
-      console.log('onSubmit', json);
       this.calendarService.updateBooking(json)
         .subscribe((res) => {
+          this.getEventData();
+          this.display = 'none';
+          this.eventData = {};
+          this.userData = {};
+          this.refresh.next();
         }, (err) => {
-
+          this.display = 'none';
+          this.refresh.next();
         });
     }
-    this.getEventData();
-    this.display = 'none';
-    this.eventData = {};
-    this.userData = {};
-    this.refresh.next();
   }
 
   formatAMPM(date) {
@@ -564,23 +640,23 @@ this.getEventData();
   }
 
   onEventEdit(weekEvent) {
-    console.log('event', weekEvent);
+    console.log('onEventEdit');
     this.display = 'block';
     this.inEdit = true;
     this.eventData = weekEvent;
     this.userData = weekEvent;
     this.eventData.time_slots = new Date(weekEvent.start).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, '$1');
-    let year = new Date(weekEvent.start).getFullYear();
-    let month = new Date(weekEvent.start).getMonth();
-    let date = new Date(weekEvent.start).getDate();
+    const year = new Date(weekEvent.start).getFullYear();
+    const month = new Date(weekEvent.start).getMonth();
+    const date = new Date(weekEvent.start).getDate();
     this.eventData.date_selected = new Date(year, month, date);
   }
 
   onDateChange(e) {
     console.log('eeeeeeeeeeee', e.target.value);
-    let year = new Date(e.target.value).getFullYear();
-    let month = new Date(e.target.value).getMonth();
-    let date = new Date(e.target.value).getDate();
+    const year = new Date(e.target.value).getFullYear();
+    const month = new Date(e.target.value).getMonth();
+    const date = new Date(e.target.value).getDate();
     this.viewDate = new Date(year, month, date);
   }
 }

@@ -72,11 +72,24 @@ ul li.nav-item a.nav-link:focus
 }
 .event-active  {
   border-radius: 3px;
-  animation: highlight 1000ms ease-out;
+  animation: highlight 5000ms ease-out;
 }
 
 @keyframes highlight {
   from {
-    background-color: red;
+    background-color: black;
   }
 }
+.cut-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 40px;
+  display: inline-block;
+  white-space: nowrap;
+}
+/*.cal-week-view .cal-time-events .cal-event-container {
+  width: auto!important;
+}*/
+/*.cal-week-view mwl-calendar-week-view-hour-segment, .cal-week-view .cal-hour-segment{
+  height: 60px !important;
+}*/

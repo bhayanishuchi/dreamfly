@@ -58,19 +58,19 @@
 
       <ng-template #dayEventTemplate let-weekEvent="weekEvent">
         <div [title]="getTitle(weekEvent.event)" (click)="onEventEdit(weekEvent.event)" id="event"
-             [class.event-active]="classApply==true"
-             [ngClass]="(weekEvent.event.totalTime === 2) ? 'two-min-width' : 'four-min-width'"
-             [ngStyle]="{'background-color': weekEvent.event.color.secondary, 'border-color': weekEvent.event.color.primary}">
-          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span
-          style="color: #1e90ff"> {{weekEvent.event.title}}</span>
+             [class.event-active]="classApply==true && searchEvent === weekEvent.event.title"
+             style="border: 1px solid"
+             [ngStyle]="{'background-color': weekEvent.event.color.secondary,  'border-color': weekEvent.event.color.primary}">
+          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span class="cut-text"
+          style="color: #1e90ff; font-size: 12px"> {{weekEvent.event.title}}</span>
         </div>
       </ng-template>
       <ng-template #eventWeekTemplate let-weekEvent="weekEvent">
         <div [title]="getTitle(weekEvent.event)"
              style="border: 1px solid;"
              [ngStyle]="{'background-color': weekEvent.event.color.secondary, 'border-color': weekEvent.event.color.primary}">
-          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span
-          style="color: #1e90ff"> {{weekEvent.event.title}}</span>
+          <input type="checkbox" (change)="checkBoxCheck(weekEvent.event)"> <span class="cut-text"
+          style="color: #1e90ff; font-size: 12px"> {{weekEvent.event.title}}</span>
         </div>
       </ng-template>
 
@@ -114,6 +114,7 @@
           (eventTimesChanged)="eventDropped($event, 'day')"
           [snapDraggedEvents]="false"
           (beforeViewRender)="beforeDayViewRender($event)"
+          [hourSegmentHeight]="60"
           [refresh]="refresh">
         </mwl-calendar-day-view>
       </div>
