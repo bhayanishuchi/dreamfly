@@ -43,7 +43,7 @@ export class MasterComponent implements OnInit {
       secondary: '#FDF1BA'
     }
   };
-  viewDate: Date = new Date();
+  viewDate: Date = new Date(2020, 0, 31);
   selectedEvent: any = [];
   selectedEvent2: any = [];
   events = [];
@@ -54,7 +54,7 @@ export class MasterComponent implements OnInit {
   activeDayIsOpen = false;
   weekBlockDates = [];
   display = 'none';
-  startValue: Date = new Date();
+  startValue: Date = new Date(2020, 0, 31);
   eventData: any = {};
   userData: any = {};
   dayStartHour: any = 0;
@@ -100,7 +100,9 @@ export class MasterComponent implements OnInit {
         console.log('productList err', err);
       });
 
-    this.externalEvents = [{
+    this.externalEvents = [];
+    /*
+    {
       title: 'External Event 1',
       color: this.colors.yellow,
       start: new Date(),
@@ -111,7 +113,8 @@ export class MasterComponent implements OnInit {
         color: this.colors.blue,
         start: new Date(),
         draggable: true
-      }];
+      }
+    */
   }
 
   getEventData() {
@@ -166,7 +169,7 @@ export class MasterComponent implements OnInit {
         if (data.blocks_blocker) {
           this.dayBlockTime = JSON.parse(data.blocks_blocker);
         } else {
-          this.dayBlockTime = [];
+          this.dayBlockTime = ['full day block'];
         }
       }, (err) => {
         console.log('getBookingData err', err);
@@ -263,6 +266,7 @@ export class MasterComponent implements OnInit {
           } else {
             str += ':' + min.toString();
           }
+          // Manage stack
           if (registerEvent.length > 0) {
             (registerEvent).forEach((x) => {
               if (this.manageStack[str] === undefined) {
@@ -280,10 +284,12 @@ export class MasterComponent implements OnInit {
               }
             });
           }
+
+          // background color
           if (this.dayBlockTime.includes(str)) {
             segment.cssClass = 'bg-pink';
           }
-          if (this.dayBlockTime.length === 0) {
+          if (this.dayBlockTime[0] === 'full day block') {
             segment.cssClass = 'bg-pink';
           }
         });
@@ -346,12 +352,16 @@ export class MasterComponent implements OnInit {
     } else {
       str += ':' + min.toString();
     }
-    if (ary.includes(str)) {
+
+    if (ary[0] === 'full day block') {
       callback(true);
     } else {
-      callback(false);
+      if (ary.includes(str)) {
+        callback(true);
+      } else {
+        callback(false);
+      }
     }
-
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
@@ -407,23 +417,8 @@ export class MasterComponent implements OnInit {
       str += ':' + min.toString();
     }
     console.log('str', str);
-    if (Object.keys(this.manageStack).includes(str)) {
-      const t1 = (event.product_type === 'first_timer') ? (Number(event.totalTime) * 1.25) : event.totalTime;
-      const time = Number(that.manageStack[str].leftTime) - Number(t1);
-      console.log('time', time);
-      if (time > 0) {
-        event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
-        that.events = [...that.events];
-      } else {
-        console.log('overTime');
-        event.color = that.colors.red;
-        that.events = [...that.events];
-      }
-    } else {
-      event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
-      console.log('false');
-      this.events = [...this.events];
-    }
+    let colorFlag = false;
+
 
     // this.events = [...this.events];
 
@@ -434,6 +429,7 @@ export class MasterComponent implements OnInit {
         flag = true;
       }
     });
+    console.log('alert', flag);
     if (flag) {
       if (this.selectedEvent.length > 0) {
         (this.selectedEvent).forEach((x) => {
@@ -444,12 +440,91 @@ export class MasterComponent implements OnInit {
               }
               y.start = newStart;
               y.end = newEnd;
-              // y.text = y.text;
+              if (Object.keys(this.manageStack).includes(str)) {
+                const t1 = (y.product_type === 'first_timer') ? (Number(y.totalTime) * 1.25) : y.totalTime;
+                const time = Number(that.manageStack[str].leftTime) - Number(t1);
+                console.log('time', time);
+                if (time > 0) {
+                  y.color = (y.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
+                  that.events = [...that.events];
+                } else {
+                  console.log('overTime');
+                  colorFlag = true;
+                  y.color = that.colors.red;
+                  that.events = [...that.events];
+                }
+              } else {
+                y.color = (y.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
+                console.log('false');
+                this.events = [...this.events];
+              }
+              console.log('=========================');
+              console.log('y', y);
+              this.eventData = y;
+              this.userData = y;
+              if (colorFlag) {
+                this.eventData.overflow = 'yes';
+              } else {
+                this.eventData.overflow = 'no';
+              }
+              this.eventData['product_duration'] = this.eventData.totalTime;
+              this.eventData['date_selected'] = this.datePipe.transform(newStart, 'yyyy-MM-dd');
+              this.eventData['time_slots'] = str;
+              console.log('userData', this.userData);
+              console.log('eventData', this.eventData);
+
+              console.log('=========================');
+              const json = {};
+              json['eventData'] = this.eventData;
+              json['userData'] = this.userData;
+              json['unique_id'] = this.eventData.unique_id;
+              this.updateBookingEvent(json);
             }
           });
         });
-        this.selectedEvent = [];
+        console.log('alert selectedEvent', this.selectedEvent);
+        that.selectedEvent = [];
       }
+    } else {
+      if (Object.keys(this.manageStack).includes(str)) {
+        const t1 = (event.product_type === 'first_timer') ? (Number(event.totalTime) * 1.25) : event.totalTime;
+        const time = Number(that.manageStack[str].leftTime) - Number(t1);
+        console.log('time', time);
+        if (time > 0) {
+          event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
+          that.events = [...that.events];
+        } else {
+          console.log('overTime');
+          colorFlag = true;
+          event.color = that.colors.red;
+          that.events = [...that.events];
+        }
+      } else {
+        event.color = (event.product_type === 'first_timer') ? this.colors.yellow : this.colors.blue;
+        console.log('false');
+        this.events = [...this.events];
+      }
+      console.log('=========================');
+      console.log('event', event);
+      this.eventData = event;
+      this.userData = event;
+      if (colorFlag) {
+        this.eventData.overflow = 'yes';
+      } else {
+        this.eventData.overflow = 'no';
+      }
+      this.eventData['product_duration'] = this.eventData.totalTime;
+      this.eventData['date_selected'] = this.datePipe.transform(newStart, 'yyyy-MM-dd');
+      this.eventData['time_slots'] = str;
+      console.log('userData', this.userData);
+      console.log('eventData', this.eventData);
+
+      console.log('=========================');
+      const json = {};
+      json['eventData'] = this.eventData;
+      json['userData'] = this.userData;
+      json['unique_id'] = this.eventData.unique_id;
+      this.updateBookingEvent(json);
     }
   }
 
@@ -460,7 +535,7 @@ export class MasterComponent implements OnInit {
                  allDay
                }: CalendarEventTimesChangedEvent, type): void {
 
-    console.log('eventDropped');
+    console.log('eventDropped, type', type);
     const that = this;
     if (type === 'week') {
       this.checkBlockDate(newStart, this.weekBlockDates, function (data) {
@@ -511,7 +586,8 @@ export class MasterComponent implements OnInit {
   }
 
   externalDrop(event: CalendarEvent) {
-    console.log('externalDrop' + event);
+    console.log('externalDrop', event);
+    console.log('selectedEvent2', this.selectedEvent2);
     let flag = false;
     (this.selectedEvent2).forEach((p) => {
       if (p.title === event.title) {
@@ -525,6 +601,8 @@ export class MasterComponent implements OnInit {
           this.events = this.events.filter(iEvent => iEvent !== x);
           this.externalEvents.push(x);
         });
+        this.selectedEvent = [];
+        this.selectedEvent2 = [];
       } else {
         this.events = this.events.filter(iEvent => iEvent !== event);
         this.externalEvents.push(event);
@@ -614,11 +692,11 @@ export class MasterComponent implements OnInit {
   onSubmit(type) {
     this.eventData['booking_type'] = 'booking';
     this.eventData['product_duration'] = this.eventData.totalTime;
-    let flag = false;
+    let flag = 'no';
     if (this.checkOverFlow(this.eventData.date_selected)) {
-      flag = true;
+      flag = 'yes';
     } else {
-      flag = false;
+      flag = 'no';
     }
     this.eventData['date_selected'] = this.datePipe.transform(this.eventData.date_selected, 'yyyy-MM-dd');
     const json = {};
@@ -627,7 +705,10 @@ export class MasterComponent implements OnInit {
 
     if (type === 'Book') {
       this.eventData.overflow = flag;
-
+      if (this.subData.sub_product_name !== undefined && this.subData.sub_product_name !== null && this.subData.sub_product_name !== '') {
+        json['subData'] = this.subData;
+        json['subData']['sub_product_id'] = this.subData.unique_id;
+      }
       this.calendarService.createNewBooking(json)
         .subscribe((res) => {
           this.getEventData();
@@ -641,33 +722,37 @@ export class MasterComponent implements OnInit {
         });
     } else {
       json['unique_id'] = this.eventData.unique_id;
-      this.calendarService.updateBooking(json)
-        .subscribe((res) => {
-          let data = {};
-          data = this.subData;
-          data['quantity'] = this.subData.quantity;
-          data['sub_product_id'] = this.subData.unique_id;
-          console.log('subData', data);
-          this.calendarService.addSubProduct({
-            order_id: this.eventData.order_id,
-            unique_id: this.eventData.unique_id,
-            subData: data
-          }).subscribe((response) => {
-              console.log('addSubProduct', response);
-              this.subData = {};
-            }, error => {
-              console.log('addSubProduct err', error);
-            });
-          this.getEventData();
-          this.display = 'none';
-          this.eventData = {};
-          this.userData = {};
-          this.refresh.next();
-        }, (err) => {
-          this.display = 'none';
-          this.refresh.next();
-        });
+      this.updateBookingEvent(json);
     }
+  }
+
+  updateBookingEvent(json) {
+    this.calendarService.updateBooking(json)
+      .subscribe((res) => {
+        /*let data = {};
+        data = this.subData;
+        data['quantity'] = this.subData.quantity;
+        data['sub_product_id'] = this.subData.unique_id;
+        console.log('subData', data);*/
+        /*this.calendarService.addSubProduct({
+          order_id: this.eventData.order_id,
+          unique_id: this.eventData.unique_id,
+          subData: data
+        }).subscribe((response) => {
+          console.log('addSubProduct', response);
+          this.subData = {};
+        }, error => {
+          console.log('addSubProduct err', error);
+        });*/
+        this.getEventData();
+        this.display = 'none';
+        this.eventData = {};
+        this.userData = {};
+        this.refresh.next();
+      }, (err) => {
+        this.display = 'none';
+        this.refresh.next();
+      });
   }
 
   formatAMPM(date) {

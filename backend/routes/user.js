@@ -12,6 +12,7 @@ router.get('/getBookingDetails', userController.getBookingDetails);
 router.get('/getSubProductDetails', userController.getSubProductDetails);
 router.post('/createNewBooking', userController.generateBooking);
 router.post('/updateBooking', userController.updateBooking);
+
 router.post('/addUserSubProduct', userController.addUserSubProduct);
 
 router.post('/', userController.createuser);    // create user or sign up : {email, password, userName}

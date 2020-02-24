@@ -2866,30 +2866,61 @@ const bookingInsert = function (data, cb) {
         quantity: data.eventData.quantity,
         time_slots: data.eventData.time_slots,
         order_id: order_id,
-    }
+    };
     if (data.eventData.overflow) {
         val['overflow'] = data.eventData.overflow;
     }
+    if (data.subData && Object.keys(data.subData).length > 0) {
+        val['has_sub_products'] = 'yes';
+    }
+    console.log('val', val);
     where.push(val);
     mysql(query, where, function (err1, result) {
-        const query1 = `INSERT INTO xyz_order_user_details SET ?`;
-        let where1 = [];
-        let val1 = {
-            order_id: order_id,
-            firstname: data.userData.firstname,
-            lastname: data.userData.lastname,
-            phonenumber: data.userData.phonenumber,
-            email: data.userData.email,
-        }
-        where1.push(val1);
         if (err1)
             cb(err1, null);
         else {
+            const query1 = `INSERT INTO xyz_order_user_details SET ?`;
+            let where1 = [];
+            let val1 = {
+                order_id: order_id,
+                firstname: data.userData.firstname,
+                lastname: data.userData.lastname,
+                phonenumber: data.userData.phonenumber,
+                email: data.userData.email,
+            };
+            where1.push(val1);
             mysql(query1, where1, function (err, result2) {
                 if (err)
                     cb(err, null);
-                else
-                    cb(null, {booking_details: result, user_details: result2});
+                else {
+                    if (data.subData && Object.keys(data.subData).length > 0) {
+                        const query2 = `INSERT INTO xyz_order_sub_products_details SET ?`;
+                        let where2 = [];
+                        let val2 = {
+                            order_id: order_id,
+                            quantity: data.subData.quantity,
+                            sub_product_id: data.subData.sub_product_id,
+                            sub_product_name: data.subData.sub_product_name,
+                            sub_product_name_pt: data.subData.sub_product_name_pt,
+                            sub_product_type: data.subData.sub_product_type,
+                            sub_product_price: data.subData.sub_product_price,
+                        };
+                        where2.push(val2);
+                        mysql(query2, where2, function (err3, result3) {
+                            if (err3)
+                                cb(err3, null);
+                            else {
+                                cb(null, {
+                                    booking_details: result,
+                                    user_details: result2,
+                                    sub_products_details: result3
+                                });
+                            }
+                        });
+                    } else {
+                        cb(null, {booking_details: result, user_details: result2});
+                    }
+                }
             })
         }
     });
@@ -2897,7 +2928,7 @@ const bookingInsert = function (data, cb) {
 
 const addSubData = function (data, cb) {
     const query = `UPDATE xyz_order_user_booking_details SET has_sub_products = 'yes' where order_id = '` + data.order_id + `' and unique_id = ` + data.unique_id + `; `;
-    console.log('query',query);
+    console.log('query', query);
     mysql(query, [], function (err1, result) {
         console.log('err1, result', err1, result);
         if (err1)
@@ -2927,7 +2958,7 @@ const addSubData = function (data, cb) {
 };
 
 const updateBookingData = function (data, cb) {
-    const query = `UPDATE xyz_order_user_booking_details SET quantity = '` + data.eventData.quantity + `', date_selected = '` + data.eventData.date_selected + `', product_duration = ` + data.eventData.product_duration + `, product_type = '` + data.eventData.product_type + `', product_name = '` + data.eventData.product_name + `', time_slots = '` + data.eventData.time_slots + `' where order_id = '` + data.eventData.order_id + `' and unique_id = ` + data.eventData.unique_id + `;`;
+    const query = `UPDATE xyz_order_user_booking_details SET overflow = '` + data.eventData.overflow + `', quantity = '` + data.eventData.quantity + `', date_selected = '` + data.eventData.date_selected + `', product_duration = ` + data.eventData.product_duration + `, product_type = '` + data.eventData.product_type + `', product_name = '` + data.eventData.product_name + `', time_slots = '` + data.eventData.time_slots + `' where order_id = '` + data.eventData.order_id + `' and unique_id = ` + data.eventData.unique_id + `;`;
     console.log('query', query);
 
     mysql(query, [], function (err1, result) {
@@ -2939,8 +2970,20 @@ const updateBookingData = function (data, cb) {
             mysql(query1, [data.userData.firstname, data.userData.lastname, data.userData.phonenumber, data.userData.email, data.eventData.order_id], function (err, result2) {
                 if (err)
                     cb(err, null);
-                else
+                else {
+                    /*console.log('err, result2', err, result2);
+                    const query2 = `UPDATE xyz_order_user_booking_details SET overflow = '` + data.eventData.overflow + `', quantity = '` + data.eventData.quantity + `', date_selected = '` + data.eventData.date_selected + `', product_duration = ` + data.eventData.product_duration + `, product_type = '` + data.eventData.product_type + `', product_name = '` + data.eventData.product_name + `', time_slots = '` + data.eventData.time_slots + `' where order_id = '` + data.eventData.order_id + `' and unique_id = ` + data.eventData.unique_id + `;`;
+                    console.log('query2', query2);
+
+                    mysql(query2, [], function (err1, result) {
+                        console.log('err1, result', err1, result);
+                        if (err1)
+                            cb(err1, null);
+                        else {*/
                     cb(null, {booking_details: result, user_details: result2});
+                    // }
+                    // });
+                }
             })
         }
     });
@@ -2992,7 +3035,7 @@ const findAllBookingData = function (cb) {
     }
 };
 
-const searchSubProduct = function (req,cb) {
+const searchSubProduct = function (req, cb) {
     const query = `SELECT * FROM xyz_order_sub_products_details os where os.order_id = ?`;
     try {
         mysql(query, [req.query.order_id], function (err, userData) {
